@@ -26,6 +26,9 @@ class Hopper(Subsystem):
 
     self._jamDetectionTimer = Timer()
 
+    SmartDashboard.putNumber("Robot/Hopper/IndexerSpeedOverride", 0)
+    SmartDashboard.putNumber("Robot/Hopper/ElevatorSpeedOverride", 0)
+
   def periodic(self) -> None:
     self._updateState()
     self._updateTelemetry()
@@ -35,8 +38,10 @@ class Hopper(Subsystem):
       self._indexer.setSpeed(-self._constants.INDEXER_REVERSE_SPEED)
       self._elevator.setSpeed(-self._constants.ELEVATOR_REVERSE_SPEED)
     elif self._isRunning:
-      self._indexer.setSpeed(self._constants.INDEXER_SPEED)
-      self._elevator.setSpeed(self._constants.ELEVATOR_SPEED)
+      indexerSpeedOverride = SmartDashboard.getNumber("Robot/Hopper/IndexerSpeedOverride", 0)
+      elevatorSpeedOverride = SmartDashboard.getNumber("Robot/Hopper/ElevatorSpeedOverride", 0)
+      self._indexer.setSpeed(self._constants.INDEXER_SPEED if indexerSpeedOverride == 0 else indexerSpeedOverride)
+      self._elevator.setSpeed(self._constants.ELEVATOR_SPEED if elevatorSpeedOverride == 0 else elevatorSpeedOverride)
     else:
       self.reset()
 

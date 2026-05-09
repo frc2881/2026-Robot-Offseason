@@ -26,9 +26,9 @@ class Game:
       .withName("Game:AlignRobotToNearestTargetPose")
     )
 
-  def alignRobotRotationToNearestBump(self) -> Command:
+  def alignRobotToNearestBump(self) -> Command:
     return (
-      self.alignRobotToNearestTargetPose([Target.BumpLeftInOut, Target.BumpLeftOutIn, Target.BumpRightInOut, Target.BumpRightOutIn], alignRotationOnly = True)
+      self.alignRobotToNearestTargetPose([Target.BumpLeftInOut, Target.BumpLeftOutIn, Target.BumpRightInOut, Target.BumpRightOutIn])
       .withName("Game:RotateRobotToNearestBump")
     )
 
