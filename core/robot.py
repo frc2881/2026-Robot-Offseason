@@ -127,7 +127,7 @@ class RobotCore:
     SmartDashboard.putNumber("Robot/Drive/Length", constants.Subsystems.Drive.BUMPER_LENGTH)
     SmartDashboard.putNumber("Robot/Drive/Width", constants.Subsystems.Drive.BUMPER_WIDTH)
     SmartDashboard.putString("Robot/Cameras/Driver", constants.Cameras.DRIVER_STREAM)
-    SmartDashboard.putStringArray("Robot/Sensors/Pose/Names", tuple(c.name for c in constants.Sensors.Pose.POSE_SENSOR_CONFIGS))
+    SmartDashboard.putStringArray("Robot/Sensors/Pose/Names", list(c.name for c in constants.Sensors.Pose.POSE_SENSOR_CONFIGS))
 
   def _periodic(self) -> None:
     self._updateTelemetry()

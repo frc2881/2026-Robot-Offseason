@@ -59,10 +59,10 @@ class Subsystems:
       drivingMotorPID = PID(0.04, 0, 0),
       turningMotorCurrentLimit = 20,
       turningMotorPID = PID(1.0, 0, 0),
-      turningMotorAbsoluteEncoderConfig = AbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoderV2
+      turningMotorAbsoluteEncoderConfig = AbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoderV2()
     )
 
-    SWERVE_MODULE_CONFIGS: tuple[SwerveModuleConfig, ...] = (
+    SWERVE_MODULE_CONFIGS: tuple[SwerveModuleConfig, SwerveModuleConfig, SwerveModuleConfig, SwerveModuleConfig] = (
       SwerveModuleConfig(SwerveModuleLocation.FrontLeft, 2, 3, -90, Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveModuleConstants),
       SwerveModuleConfig(SwerveModuleLocation.FrontRight, 4, 5, 0, Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveModuleConstants),
       SwerveModuleConfig(SwerveModuleLocation.RearLeft, 6, 7, 180, Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveModuleConstants),

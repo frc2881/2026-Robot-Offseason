@@ -2,9 +2,9 @@ from typing import TYPE_CHECKING
 from enum import Enum, auto
 from commands2 import Command, cmd
 from wpilib import SendableChooser, SmartDashboard
-from wpimath.geometry import Transform2d
+from wpimath.geometry import Transform2d, Rotation2d
 from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.path import PathPlannerPath
+from pathplannerlib.path import PathPlannerPath, PathConstraints, GoalEndState
 from lib import logger, utils
 from lib.classes import Alliance
 import core.constants as constants
@@ -57,16 +57,19 @@ class Auto:
   def set(self, auto: Command) -> None:
     self._auto = auto
     SmartDashboard.putString("Robot/Auto/command", auto.getName().replace("Auto:", ""))
+
+  def _getPath(self, path: AutoPath) -> PathPlannerPath:
+    return self._paths.get(path, PathPlannerPath([], PathConstraints(0, 0, 0, 0), None, GoalEndState(0, Rotation2d())))
   
   def _reset(self, path: AutoPath) -> Command:
     return (
-      AutoBuilder.resetOdom(self._paths.get(path).getPathPoses()[0].transformBy(Transform2d(0, 0, self._paths.get(path).getInitialHeading())))
+      AutoBuilder.resetOdom(self._getPath(path).getPathPoses()[0].transformBy(Transform2d(0, 0, self._getPath(path).getInitialHeading())))
       .andThen(cmd.waitSeconds(0.1))
     ).deadlineFor(logger.log_("Auto:Reset"))
   
   def _move(self, path: AutoPath) -> Command:
     return (
-      AutoBuilder.followPath(self._paths.get(path))
+      AutoBuilder.followPath(self._getPath(path))
     ).deadlineFor(logger.log_(f'Auto:Move:{path.name}'))
   
   def auto_NONE(self) -> Command:

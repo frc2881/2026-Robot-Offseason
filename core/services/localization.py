@@ -14,7 +14,7 @@ class Localization():
   def __init__(
       self,
       getGyroHeading: Callable[[], units.degrees],
-      getDriveModulePositions: Callable[[], tuple[SwerveModulePosition, ...]],
+      getDriveModulePositions: Callable[[], tuple[SwerveModulePosition, SwerveModulePosition, SwerveModulePosition, SwerveModulePosition]],
       poseSensors: tuple[PoseSensor, ...]
     ) -> None:
     self._constants = constants.Services.Localization
@@ -45,13 +45,14 @@ class Localization():
     hasValidPoseSensorResult = False
     for poseSensor in self._poseSensors:
       poseSensorResult = poseSensor.getLatestResult()
-      if self._isResultValid(poseSensorResult):
-        self._poseEstimator.addVisionMeasurement(
-          poseSensorResult.estimatedPose.toPose2d(), 
-          poseSensorResult.timestamp,
-          self._getStandardDeviations(poseSensorResult)
-        )
-        hasValidPoseSensorResult = True
+      if poseSensorResult is not None:
+        if self._isResultValid(poseSensorResult):
+          self._poseEstimator.addVisionMeasurement(
+            poseSensorResult.estimatedPose.toPose2d(), 
+            poseSensorResult.timestamp,
+            self._getStandardDeviations(poseSensorResult)
+          )
+          hasValidPoseSensorResult = True
     if hasValidPoseSensorResult:
       self._hasValidPoseSensorResult = True
       self._validPoseSensorResultTimer.restart()
@@ -61,8 +62,6 @@ class Localization():
 
   def _isResultValid(self, poseSensorResult: PoseSensorResult) -> bool:
     return (         
-      poseSensorResult is not None 
-      and
       utils.isPoseWithinZone(poseSensorResult.estimatedPose.toPose2d(), constants.Game.Field.ZONE) 
       and
       poseSensorResult.bestTargetDistance <= self._constants.MAX_TARGET_DISTANCE 

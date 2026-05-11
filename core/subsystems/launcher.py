@@ -29,15 +29,16 @@ class Launcher(Subsystem):
 
   def run_(self, getSpeed: Callable[[], units.percent]) -> Command:
     return self.runEnd(
-      lambda: [
-        launcherSpeedOverride := SmartDashboard.getNumber("Robot/Launcher/SpeedOverride", 0),
-        acceleratorSpeedRatioOverride := SmartDashboard.getNumber("Robot/Launcher/AcceleratorSpeedRatioOverride", 0),
-        speed := getSpeed() if launcherSpeedOverride == 0 else launcherSpeedOverride,
-        self._launcherLeader.setSpeed(speed),
-        self._launcherAccelerator.setSpeed(speed * (self._constants.LAUNCHER_ACCELERATOR_SPEED_RATIO if acceleratorSpeedRatioOverride == 0 else acceleratorSpeedRatioOverride))
-      ],
+      lambda: self._setSpeed(getSpeed()),
       lambda: self.reset()
     )
+  
+  def _setSpeed(self, speed: units.percent) -> None:
+    launcherSpeedOverride = SmartDashboard.getNumber("Robot/Launcher/SpeedOverride", 0)
+    acceleratorSpeedRatioOverride = SmartDashboard.getNumber("Robot/Launcher/AcceleratorSpeedRatioOverride", 0)
+    if launcherSpeedOverride != 0: speed = launcherSpeedOverride
+    self._launcherLeader.setSpeed(speed)
+    self._launcherAccelerator.setSpeed(speed * (self._constants.LAUNCHER_ACCELERATOR_SPEED_RATIO if acceleratorSpeedRatioOverride == 0 else acceleratorSpeedRatioOverride))
   
   def isAtTargetSpeed(self) -> bool:
     return self._launcherLeader.isAtTargetSpeed() and self._launcherAccelerator.isAtTargetSpeed()
