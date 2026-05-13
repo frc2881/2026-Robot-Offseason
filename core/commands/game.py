@@ -29,7 +29,7 @@ class Game:
   def alignRobotToNearestBump(self) -> Command:
     return (
       self.alignRobotToNearestTargetPose([Target.BumpLeftInOut, Target.BumpLeftOutIn, Target.BumpRightInOut, Target.BumpRightOutIn])
-      .withName("Game:RotateRobotToNearestBump")
+      .withName("Game:AlignRobotToNearestBump")
     )
 
   def alignTurretToActiveTarget(self) -> Command:

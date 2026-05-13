@@ -37,7 +37,7 @@ from lib.classes import (
 from core.classes import Target, LaunchMetric, FuelLevel
 import lib.constants
 
-_aprilTagFieldLayout = AprilTagFieldLayout(f'{ wpilib.getDeployDirectory() }/localization/2026-rebuilt-welded.json')
+_aprilTagFieldLayout = AprilTagFieldLayout(f'{ wpilib.getDeployDirectory() }/localization/2026-rebuilt-andymark.json')
 
 class Subsystems:
   class Drive:
