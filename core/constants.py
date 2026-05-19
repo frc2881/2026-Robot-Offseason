@@ -138,7 +138,7 @@ class Subsystems:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
+      motorCurrentLimit = 80,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -150,7 +150,7 @@ class Subsystems:
     ELEVATOR_CONFIG = VelocityControlModuleConfig("Hopper/Elevator", 16, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 80,
+      motorCurrentLimit = 60,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -197,7 +197,7 @@ class Subsystems:
     LAUNCHER_LEADER_CONFIG = VelocityControlModuleConfig("Launcher/Leader", 10, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 80,
+      motorCurrentLimit = 0,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -215,7 +215,7 @@ class Subsystems:
     LAUNCHER_ACCELERATOR_CONFIG = VelocityControlModuleConfig("Launcher/Accelerator", 12, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 80,
+      motorCurrentLimit = 60,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -225,7 +225,7 @@ class Subsystems:
     ))
 
     LAUNCHER_TRANSFORM = Transform3d(units.inchesToMeters(-4.75), units.inchesToMeters(7.875), units.inchesToMeters(25.3375), Rotation3d())
-    LAUNCHER_ACCELERATOR_SPEED_RATIO: units.percent = 1.0
+    LAUNCHER_ACCELERATOR_SPEED_RATIO: units.percent = 1.25
 
 class Services:
   class Localization:
@@ -348,9 +348,9 @@ class Game:
           Target.Hub: Pose3d(4.625, 4.030, 1.263, Rotation3d(Rotation2d.fromDegrees(0))), 
           Target.ShuttleLeft: Pose3d(3.0, 5.25, 0, Rotation3d(Rotation2d.fromDegrees(180.0))),
           Target.ShuttleRight: Pose3d(3.0, 3.0, 0, Rotation3d(Rotation2d.fromDegrees(180.0))), 
-          Target.BumpLeftInOut: Pose3d(2.800, 5.700, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+          Target.BumpLeftInOut: Pose3d(2.800, 5.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
           Target.BumpLeftOutIn: Pose3d(6.400, 5.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
-          Target.BumpRightInOut: Pose3d(2.800, 2.700, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+          Target.BumpRightInOut: Pose3d(2.800, 2.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
           Target.BumpRightOutIn: Pose3d(6.400, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
         },
         Alliance.Red: {}

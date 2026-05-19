@@ -11,6 +11,8 @@ if TYPE_CHECKING: from core.robot import RobotCore
 class Game:
   def __init__(self, robot: "RobotCore") -> None:
     self._robot = robot
+
+    self._driveSpeed = 0
     
   def alignRobotToTargetPose(self, target: Target, alignRotationOnly: bool = False) -> Command:
     return (
@@ -25,12 +27,32 @@ class Game:
       .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
       .withName("Game:AlignRobotToNearestTargetPose")
     )
-
+  
   def alignRobotToNearestBump(self) -> Command:
     return (
       self.alignRobotToNearestTargetPose([Target.BumpLeftInOut, Target.BumpLeftOutIn, Target.BumpRightInOut, Target.BumpRightOutIn])
       .withName("Game:AlignRobotToNearestBump")
     )
+
+  def driveRobotOverNearestBump(self) -> Command:
+    return (
+      (self.alignRobotToNearestBump().withTimeout(2.0))
+      .andThen(self._robot.drive.drive(lambda: self._getDriveSpeed(), lambda: 0, lambda: 0).withTimeout(2.0))
+      .finallyDo(lambda end: self._resetDriveSpeed())
+    )
+  
+  def _getDriveSpeed(self) -> units.percent:
+    if self._driveSpeed == 0:
+      speed = 0.6
+      x = self._robot.localization.getRobotPose().X()
+      isBlueAZ = utils.isValueWithinRange(x, 0, 4.0)
+      isRedNZ = utils.isValueWithinRange(x, 8.2, 11.4)
+      speed if isBlueAZ or isRedNZ else -speed
+      self._driveSpeed = speed
+    return self._driveSpeed
+
+  def _resetDriveSpeed(self) -> None:
+    self._driveSpeed = 0
 
   def alignTurretToActiveTarget(self) -> Command:
     return (
