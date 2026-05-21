@@ -71,15 +71,15 @@ class Subsystems:
 
     DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.translation for c in SWERVE_MODULE_CONFIGS))
 
-    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 1.0
-    ROTATION_MAX_VELOCITY: units.degrees_per_second = 720.0
+    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 0.75
+    ROTATION_MAX_VELOCITY: units.degrees_per_second = 540.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
       translationPID = PID(3.0, 0, 0),
       translationMaxVelocity = 3.0,
       translationPositionTolerance = 0.025,
       rotationPID = PID(4.0, 0, 0),
-      rotationMaxVelocity = 960.0,
+      rotationMaxVelocity = 720.0,
       rotationPositionTolerance = 0.5
     )
 
@@ -336,6 +336,7 @@ class Game:
   class Commands:
     LAUNCHER_READY_TIMEOUT: units.seconds = 1.0
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 3.0
+    BUMP_TRAVERSAL_DISTANCE: units.meters = 4.0
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
@@ -348,10 +349,10 @@ class Game:
           Target.Hub: Pose3d(4.625, 4.030, 1.263, Rotation3d(Rotation2d.fromDegrees(0))), 
           Target.ShuttleLeft: Pose3d(3.0, 5.25, 0, Rotation3d(Rotation2d.fromDegrees(180.0))),
           Target.ShuttleRight: Pose3d(3.0, 3.0, 0, Rotation3d(Rotation2d.fromDegrees(180.0))), 
-          Target.BumpLeftInOut: Pose3d(2.800, 5.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
-          Target.BumpLeftOutIn: Pose3d(6.400, 5.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
-          Target.BumpRightInOut: Pose3d(2.800, 2.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
-          Target.BumpRightOutIn: Pose3d(6.400, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
+          Target.BumpLeftAZ: Pose3d(2.800, 5.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+          Target.BumpLeftNZ: Pose3d(6.400, 5.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
+          Target.BumpRightAZ: Pose3d(2.800, 2.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+          Target.BumpRightNZ: Pose3d(6.400, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
         },
         Alliance.Red: {}
       }

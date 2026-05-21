@@ -6,10 +6,10 @@ class Target(Enum):
   Hub = auto()
   ShuttleLeft = auto()
   ShuttleRight = auto()
-  BumpLeftInOut = auto()
-  BumpLeftOutIn = auto()
-  BumpRightInOut = auto()
-  BumpRightOutIn = auto()
+  BumpLeftAZ = auto()
+  BumpLeftNZ = auto()
+  BumpRightAZ = auto()
+  BumpRightNZ = auto()
 
 @dataclass(frozen=False, slots=True)
 class TargetInfo:

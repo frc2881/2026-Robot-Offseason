@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 from commands2 import Command, cmd
 from wpilib import RobotBase
 from wpimath import units
+from wpimath.geometry import Pose3d, Transform3d, Rotation3d
 from lib import logger, utils
 from lib.classes import ControllerRumbleMode, ControllerRumblePattern
 from core.classes import Target
@@ -12,8 +13,6 @@ class Game:
   def __init__(self, robot: "RobotCore") -> None:
     self._robot = robot
 
-    self._driveSpeed = 0
-    
   def alignRobotToTargetPose(self, target: Target, alignRotationOnly: bool = False) -> Command:
     return (
       self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._robot.targeting.getTargetPose(target), alignRotationOnly)
@@ -28,31 +27,23 @@ class Game:
       .withName("Game:AlignRobotToNearestTargetPose")
     )
   
-  def alignRobotToNearestBump(self) -> Command:
+  def alignRobotToBump(self) -> Command:
     return (
-      self.alignRobotToNearestTargetPose([Target.BumpLeftInOut, Target.BumpLeftOutIn, Target.BumpRightInOut, Target.BumpRightOutIn])
+      self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
       .withName("Game:AlignRobotToNearestBump")
     )
 
-  def driveRobotOverNearestBump(self) -> Command:
+  def driveRobotOverBump(self) -> Command:
     return (
-      (self.alignRobotToNearestBump().withTimeout(2.0))
-      .andThen(self._robot.drive.drive(lambda: self._getDriveSpeed(), lambda: 0, lambda: 0).withTimeout(2.0))
-      .finallyDo(lambda end: self._resetDriveSpeed())
+      (self.alignRobotToBump().withTimeout(3.0))
+      .andThen(self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(3.0))
     )
-  
-  def _getDriveSpeed(self) -> units.percent:
-    if self._driveSpeed == 0:
-      speed = 0.6
-      x = self._robot.localization.getRobotPose().X()
-      isBlueAZ = utils.isValueWithinRange(x, 0, 4.0)
-      isRedNZ = utils.isValueWithinRange(x, 8.2, 11.4)
-      speed if isBlueAZ or isRedNZ else -speed
-      self._driveSpeed = speed
-    return self._driveSpeed
 
-  def _resetDriveSpeed(self) -> None:
-    self._driveSpeed = 0
+  def _getBumpTraversalPose(self) -> Pose3d:
+    targetPose = self._robot.targeting.getNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
+    isXTranslationPositive = utils.isValueWithinRange(targetPose.X(), 0, 4.4) or utils.isValueWithinRange(targetPose.X(), 8.6, 11.6)
+    transform = Transform3d(constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE if isXTranslationPositive else -constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE, 0, 0, Rotation3d())
+    return targetPose.transformBy(transform)
 
   def alignTurretToActiveTarget(self) -> Command:
     return (
