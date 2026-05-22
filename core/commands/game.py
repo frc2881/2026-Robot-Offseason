@@ -35,15 +35,19 @@ class Game:
 
   def driveRobotOverBump(self) -> Command:
     return (
-      (self.alignRobotToBump().withTimeout(3.0))
-      .andThen(self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(3.0))
+      (self.alignRobotToBump().withTimeout(1.5))
+      .andThen((self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(3.0)))
     )
 
   def _getBumpTraversalPose(self) -> Pose3d:
     targetPose = self._robot.targeting.getNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
     isXTranslationPositive = utils.isValueWithinRange(targetPose.X(), 0, 4.4) or utils.isValueWithinRange(targetPose.X(), 8.6, 11.6)
-    transform = Transform3d(constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE if isXTranslationPositive else -constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE, 0, 0, Rotation3d())
-    return targetPose.transformBy(transform)
+    return Pose3d(
+      x = targetPose.X() + constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE if isXTranslationPositive else -constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE,
+      y = targetPose.Y(),
+      z = targetPose.Z(),
+      rotation = targetPose.rotation()
+    )
 
   def alignTurretToActiveTarget(self) -> Command:
     return (

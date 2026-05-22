@@ -55,7 +55,7 @@ class Subsystems:
       drivingMotorType = SparkLowLevel.MotorType.kBrushless,
       drivingMotorFreeSpeed = lib.constants.Motors.MOTOR_FREE_SPEEDS[_drivingMotorModel],
       drivingMotorReduction = lib.constants.Drive.SWERVE_MODULE_GEAR_RATIOS[_swerveModuleGearKit],
-      drivingMotorCurrentLimit = 60,
+      drivingMotorCurrentLimit = 40,
       drivingMotorPID = PID(0.04, 0, 0),
       turningMotorCurrentLimit = 20,
       turningMotorPID = PID(1.0, 0, 0),
@@ -71,12 +71,12 @@ class Subsystems:
 
     DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.translation for c in SWERVE_MODULE_CONFIGS))
 
-    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 0.75
+    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 1.0
     ROTATION_MAX_VELOCITY: units.degrees_per_second = 540.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
       translationPID = PID(3.0, 0, 0),
-      translationMaxVelocity = 3.0,
+      translationMaxVelocity = 2.0,
       translationPositionTolerance = 0.025,
       rotationPID = PID(4.0, 0, 0),
       rotationMaxVelocity = 720.0,
@@ -120,7 +120,7 @@ class Subsystems:
     ROLLERS_CONFIG = VelocityControlModuleConfig("Intake/Rollers", 17, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 80, 
+      motorCurrentLimit = 60, 
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -336,7 +336,7 @@ class Game:
   class Commands:
     LAUNCHER_READY_TIMEOUT: units.seconds = 1.0
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 3.0
-    BUMP_TRAVERSAL_DISTANCE: units.meters = 4.0
+    BUMP_TRAVERSAL_DISTANCE: units.meters = 5.0
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
