@@ -87,7 +87,7 @@ class RobotCore:
     self.driver.leftStick().whileTrue(self.drive.lockSwerveModules())
     # self.driver.rightStick().whileTrue(cmd.none())
     # self.driver.leftTrigger().whileTrue(cmd.none())
-    self.driver.leftBumper().whileTrue(self.game.driveRobotOverBump())
+    self.driver.leftBumper().whileTrue(self.game.alignAndMoveRobotOverBump())
     self.driver.rightTrigger().whileTrue(self.game.runIntake())
     self.driver.rightBumper().whileTrue(self.game.retractIntake())
     # self.driver.a().whileTrue(cmd.none())

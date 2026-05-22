@@ -336,7 +336,7 @@ class Game:
   class Commands:
     LAUNCHER_READY_TIMEOUT: units.seconds = 1.0
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 3.0
-    BUMP_TRAVERSAL_DISTANCE: units.meters = 5.0
+    BUMP_TRAVERSAL_DISTANCE: units.meters = 3.6
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()

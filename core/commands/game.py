@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from commands2 import Command, cmd
 from wpilib import RobotBase
 from wpimath import units
-from wpimath.geometry import Pose3d, Transform3d, Rotation3d
+from wpimath.geometry import Pose3d
 from lib import logger, utils
 from lib.classes import ControllerRumbleMode, ControllerRumblePattern
 from core.classes import Target
@@ -27,23 +27,21 @@ class Game:
       .withName("Game:AlignRobotToNearestTargetPose")
     )
   
-  def alignRobotToBump(self) -> Command:
+  def alignAndMoveRobotOverBump(self) -> Command:
     return (
-      self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
-      .withName("Game:AlignRobotToNearestBump")
-    )
-
-  def driveRobotOverBump(self) -> Command:
-    return (
-      (self.alignRobotToBump().withTimeout(1.5))
-      .andThen((self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(3.0)))
+      (self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ]).withTimeout(1.5))
+      .andThen((self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(4.0)))
+      .withName("Game:DriveRobotOverBump")
     )
 
   def _getBumpTraversalPose(self) -> Pose3d:
     targetPose = self._robot.targeting.getNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
-    isXTranslationPositive = utils.isValueWithinRange(targetPose.X(), 0, 4.4) or utils.isValueWithinRange(targetPose.X(), 8.6, 11.6)
     return Pose3d(
-      x = targetPose.X() + constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE if isXTranslationPositive else -constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE,
+      x = targetPose.X() + (
+        constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE 
+        if utils.isValueWithinRange(targetPose.X(), 0, 4.4) or utils.isValueWithinRange(targetPose.X(), 8.6, 11.6) else 
+        -constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE
+      ),
       y = targetPose.Y(),
       z = targetPose.Z(),
       rotation = targetPose.rotation()
