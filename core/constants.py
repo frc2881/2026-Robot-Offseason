@@ -76,9 +76,9 @@ class Subsystems:
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
       translationPID = PID(3.0, 0, 0),
-      translationMaxVelocity = 2.0,
+      translationMaxVelocity = 2.5,
       translationPositionTolerance = 0.025,
-      rotationPID = PID(4.0, 0, 0),
+      rotationPID = PID(5.0, 0, 0),
       rotationMaxVelocity = 720.0,
       rotationPositionTolerance = 0.5
     )
@@ -138,7 +138,7 @@ class Subsystems:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 80,
+      motorCurrentLimit = 60,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -336,7 +336,7 @@ class Game:
   class Commands:
     LAUNCHER_READY_TIMEOUT: units.seconds = 1.0
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 3.0
-    BUMP_TRAVERSAL_DISTANCE: units.meters = 3.6
+    BUMP_TRAVERSAL_DISTANCE: units.meters = 4.5
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
