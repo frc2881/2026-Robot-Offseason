@@ -55,7 +55,7 @@ class Subsystems:
       drivingMotorType = SparkLowLevel.MotorType.kBrushless,
       drivingMotorFreeSpeed = lib.constants.Motors.MOTOR_FREE_SPEEDS[_drivingMotorModel],
       drivingMotorReduction = lib.constants.Drive.SWERVE_MODULE_GEAR_RATIOS[_swerveModuleGearKit],
-      drivingMotorCurrentLimit = 40,
+      drivingMotorCurrentLimit = 60,
       drivingMotorPID = PID(0.04, 0, 0),
       turningMotorCurrentLimit = 20,
       turningMotorPID = PID(1.0, 0, 0),
@@ -72,14 +72,14 @@ class Subsystems:
     DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.translation for c in SWERVE_MODULE_CONFIGS))
 
     TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 1.0
-    ROTATION_MAX_VELOCITY: units.degrees_per_second = 540.0
+    ROTATION_MAX_VELOCITY: units.degrees_per_second = 720.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
       translationPID = PID(3.0, 0, 0),
       translationMaxVelocity = 2.5,
       translationPositionTolerance = 0.025,
-      rotationPID = PID(5.0, 0, 0),
-      rotationMaxVelocity = 720.0,
+      rotationPID = PID(3.0, 0, 0),
+      rotationMaxVelocity = 960.0,
       rotationPositionTolerance = 0.5
     )
 
