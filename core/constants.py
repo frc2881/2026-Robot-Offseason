@@ -138,7 +138,7 @@ class Subsystems:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
+      motorCurrentLimit = 70,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -150,7 +150,7 @@ class Subsystems:
     ELEVATOR_CONFIG = VelocityControlModuleConfig("Hopper/Elevator", 16, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
+      motorCurrentLimit = 70,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),

@@ -80,7 +80,8 @@ class RobotCore:
         self.drive.holdCoastMode()
       ).onlyWhile(lambda: utils.getRobotState() == RobotState.Disabled)
       .ignoringDisable(True)
-    .withName("HomingButton:Pressed"))
+      .withName("HomingButton:Pressed")
+    )
 
   def _setupDriver(self) -> None:
     self.drive.setDefaultCommand(self.drive.drive(self.driver.getLeftY, self.driver.getLeftX, self.driver.getRightX))
@@ -99,7 +100,7 @@ class RobotCore:
     # self.driver.povUp().whileTrue(cmd.none())
     # self.driver.povDown().whileTrue(cmd.none())
     # self.driver.start().whileTrue(cmd.none())
-    self.driver.back().debounce(0.5).whileTrue(self.gyro.reset().ignoringDisable(True))
+    self.driver.back().debounce(0.5).whileTrue(self.game.resetGyro())
 
   def _setupOperator(self) -> None:
     # self.operator.leftStick().whileTrue(cmd.none())

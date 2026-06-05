@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from commands2 import Command, cmd
 from wpilib import RobotBase
 from wpimath import units
-from wpimath.geometry import Pose3d
+from wpimath.geometry import Pose3d, Rotation3d
 from lib import logger, utils
 from lib.classes import ControllerRumbleMode, ControllerRumblePattern
 from core.classes import Target
@@ -29,8 +29,11 @@ class Game:
   
   def alignAndMoveRobotOverBump(self) -> Command:
     return (
-      (self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ]).withTimeout(1.5))
-      .andThen((self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(4.0)))
+      (self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ]).withTimeout(1.0))
+      .andThen(
+        self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(2.5),
+        self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpCompletionPose()).withTimeout(1.5)
+      )
       .withName("Game:DriveRobotOverBump")
     )
 
@@ -46,7 +49,16 @@ class Game:
       z = targetPose.Z(),
       rotation = targetPose.rotation()
     )
-
+  
+  def _getBumpCompletionPose(self) -> Pose3d:
+    targetPose = self._robot.localization.getRobotPose()
+    return Pose3d(
+      x = targetPose.X(),
+      y = targetPose.Y(),
+      z = 0,
+      rotation = Rotation3d(0, 0, units.degreesToRadians(utils.wrapAngle(targetPose.rotation().degrees() + 180.0)))
+    )
+  
   def alignTurretToActiveTarget(self) -> Command:
     return (
       self._robot.turret.setHeading(lambda: self._robot.targeting.getActiveTargetInfo().heading)
@@ -105,6 +117,14 @@ class Game:
       .onlyIf(lambda: self._robot.targeting.getActiveTarget() is not None)
       .onlyWhile(lambda: self._robot.targeting.getActiveTarget() is not None)
       .withName("Game:LaunchFuel")
+    )
+  
+  def resetGyro(self) -> Command:
+    return (
+      self._robot.gyro.reset()
+      .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
+      .ignoringDisable(True)
+      .withName("Game:ResetGyro")
     )
 
   def rumbleControllers(
