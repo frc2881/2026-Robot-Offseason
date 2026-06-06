@@ -29,11 +29,10 @@ class Game:
   
   def alignAndMoveRobotOverBump(self) -> Command:
     return (
-      (self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ]).withTimeout(1.0))
-      .andThen(
-        self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()).withTimeout(2.5),
-        self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpCompletionPose()).withTimeout(1.5)
-      )
+      self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
+      .andThen(self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()))
+      .andThen(self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpCompletionPose()))
+      .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
       .withName("Game:DriveRobotOverBump")
     )
 

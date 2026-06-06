@@ -75,12 +75,12 @@ class Subsystems:
     ROTATION_MAX_VELOCITY: units.degrees_per_second = 720.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
-      translationPID = PID(3.0, 0, 0),
-      translationMaxVelocity = 2.5,
-      translationPositionTolerance = 0.025,
-      rotationPID = PID(3.0, 0, 0),
-      rotationMaxVelocity = 960.0,
-      rotationPositionTolerance = 0.5
+      translationPID = PID(4.0, 0, 0),
+      translationMaxVelocity = 2.4,
+      translationPositionTolerance = 0.15,
+      rotationPID = PID(4.0, 0, 0),
+      rotationMaxVelocity = 720.0,
+      rotationPositionTolerance = 3.0
     )
 
     TARGET_HEADING_ALIGNMENT_CONSTANTS = HeadingAlignmentConstants(
@@ -336,7 +336,7 @@ class Game:
   class Commands:
     LAUNCHER_READY_TIMEOUT: units.seconds = 1.0
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 3.0
-    BUMP_TRAVERSAL_DISTANCE: units.meters = 4.5
+    BUMP_TRAVERSAL_DISTANCE: units.meters = 4.75
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
