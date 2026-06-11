@@ -16,14 +16,12 @@ class Game:
   def alignRobotToTargetPose(self, target: Target, alignRotationOnly: bool = False) -> Command:
     return (
       self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._robot.targeting.getTargetPose(target), alignRotationOnly)
-      .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
       .withName(f'Game:AlignRobotToTargetPose:{ target.name }')
     )
 
   def alignRobotToNearestTargetPose(self, targets: list[Target], alignRotationOnly: bool = False) -> Command:
     return (
       self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._robot.targeting.getNearestTargetPose(targets), alignRotationOnly)
-      .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
       .withName("Game:AlignRobotToNearestTargetPose")
     )
   
@@ -55,7 +53,7 @@ class Game:
       x = targetPose.X(),
       y = targetPose.Y(),
       z = 0,
-      rotation = Rotation3d(0, 0, units.degreesToRadians(utils.wrapAngle(targetPose.rotation().degrees() + 180.0)))
+      rotation = Rotation3d(0, 0, units.degreesToRadians(utils.wrapAngle(targetPose.rotation().degrees() + 90.0)))
     )
   
   def alignTurretToActiveTarget(self) -> Command:

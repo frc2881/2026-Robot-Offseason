@@ -71,13 +71,13 @@ class Subsystems:
 
     DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.translation for c in SWERVE_MODULE_CONFIGS))
 
-    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 1.0
-    ROTATION_MAX_VELOCITY: units.degrees_per_second = 720.0
+    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 0.9
+    ROTATION_MAX_VELOCITY: units.degrees_per_second = 540.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
       translationPID = PID(4.0, 0, 0),
       translationMaxVelocity = 2.4,
-      translationPositionTolerance = 0.15,
+      translationPositionTolerance = 0.1,
       rotationPID = PID(4.0, 0, 0),
       rotationMaxVelocity = 720.0,
       rotationPositionTolerance = 3.0
@@ -138,11 +138,11 @@ class Subsystems:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 70,
+      motorCurrentLimit = 60,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionMaxVelocity = 9000.0, 
+      motorMotionMaxVelocity = 12000.0, 
       motorMotionMaxAcceleration = 12000.0,
       motorVelocityConversionFactor = 3.0 / 1.0
     ))
@@ -150,7 +150,7 @@ class Subsystems:
     ELEVATOR_CONFIG = VelocityControlModuleConfig("Hopper/Elevator", 16, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 70,
+      motorCurrentLimit = 80,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -159,12 +159,12 @@ class Subsystems:
       motorVelocityConversionFactor = 3.0 / 1.0
     ))
 
-    INDEXER_SPEED: units.percent = 1.0
+    INDEXER_SPEED: units.percent = 0.75
     ELEVATOR_SPEED: units.percent = 1.0
-    INDEXER_REVERSE_SPEED: units.percent = 0.5
-    ELEVATOR_REVERSE_SPEED: units.percent = 0.5
+    INDEXER_REVERSE_SPEED: units.percent = 0.8
+    ELEVATOR_REVERSE_SPEED: units.percent = 0.8
 
-    AGITATION_TIMEOUT: units.seconds = 0.25
+    AGITATION_TIMEOUT: units.seconds = 0.5
     JAM_DETECTION_TIMEOUT: units.seconds = 3.0
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
       FuelLevel.Full: 200,
@@ -197,7 +197,7 @@ class Subsystems:
     LAUNCHER_LEADER_CONFIG = VelocityControlModuleConfig("Launcher/Leader", 10, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 0,
+      motorCurrentLimit = 60,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
