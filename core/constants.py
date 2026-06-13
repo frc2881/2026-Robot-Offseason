@@ -158,8 +158,8 @@ class Subsystems:
       motorMotionMaxAcceleration = 12000.0,
       motorVelocityConversionFactor = 3.0 / 1.0
     ))
-
-    INDEXER_SPEED: units.percent = 0.75
+    
+    INDEXER_SPEED: units.percent = 1.0
     ELEVATOR_SPEED: units.percent = 1.0
     INDEXER_REVERSE_SPEED: units.percent = 0.8
     ELEVATOR_REVERSE_SPEED: units.percent = 0.8
