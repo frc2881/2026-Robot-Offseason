@@ -6,6 +6,7 @@ from lib import logger, utils
 from lib.classes import Range
 from lib.components.relative_position_control_module import RelativePositionControlModule
 from lib.components.velocity_control_module import VelocityControlModule
+from lib.components.follower_module import FollowerModule
 from core.classes import FuelLevel
 import core.constants as constants
 
@@ -19,7 +20,8 @@ class Intake(Subsystem):
     self._getFuelLevel = getFuelLevel
 
     self._arm = RelativePositionControlModule(self._constants.ARM_CONFIG)
-    self._rollers = VelocityControlModule(self._constants.ROLLERS_CONFIG)
+    self._rollersLeader = VelocityControlModule(self._constants.ROLLERS_LEADER_CONFIG)
+    self._rollersFollower = FollowerModule(self._constants.ROLLERS_FOLLOWER_CONFIG)
 
     self._isRunning: bool = False
     self._isAgitating: bool = False
@@ -35,11 +37,11 @@ class Intake(Subsystem):
     if self._isRunning:
       if self._arm.getTargetPosition() != self._constants.ARM_INTAKE_HOLD_POSITION:
         self._arm.setPosition(self._constants.ARM_INTAKE_HOLD_POSITION)
-      self._rollers.setSpeed(self._constants.ROLLERS_INTAKE_SPEED if self.isExtended() else 0)
+      self._rollersLeader.setSpeed(self._constants.ROLLERS_INTAKE_SPEED if self.isExtended() else 0)
     elif self._isRetracting:
       if self._arm.getTargetPosition() != self._constants.ARM_RETRACT_POSITION:
         self._arm.setPosition(self._constants.ARM_RETRACT_POSITION)
-      self._rollers.setSpeed(0)
+      self._rollersLeader.setSpeed(0)
     elif self._isAgitating:
       time: units.seconds = 1.0
       range = Range(0.1, 0.9)
@@ -58,7 +60,7 @@ class Intake(Subsystem):
       position = self._constants.ARM_INTAKE_HARDSTOP_POSITION * (range.min if self._agitationTimer.get() < time * 0.6 else range.max)
       if self._arm.getTargetPosition() != position:
           self._arm.setPosition(position)  
-      self._rollers.setSpeed(speed)
+      self._rollersLeader.setSpeed(speed)
     else:
       if not self.isHoming():
         self.reset()
@@ -85,7 +87,7 @@ class Intake(Subsystem):
     return self._arm.getPosition() > self._constants.ARM_INTAKE_HARDSTOP_POSITION * 0.75
   
   def isRunning(self) -> bool:
-    return self._rollers.getSpeed() > 0.01
+    return self._rollersLeader.getSpeed() > 0.01
   
   def resetToHome(self) -> Command:
     return self._arm.resetToHome(self).withName("Intake:ResetToHome")
@@ -98,7 +100,7 @@ class Intake(Subsystem):
 
   def reset(self) -> None:
     self._arm.reset()
-    self._rollers.reset()
+    self._rollersLeader.reset()
 
   def _updateTelemetry(self) -> None:
     SmartDashboard.putBoolean("Robot/Intake/IsExtended", self.isExtended())

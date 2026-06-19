@@ -111,16 +111,16 @@ class Subsystems:
       motorMotionMaxAcceleration = 24000.0,
       motorMotionAllowedProfileError = 0.5,
       motorRelativeEncoderPositionConversionFactor = 1.0,
-      motorSoftLimitForward = 40.0,
+      motorSoftLimitForward = 50.0,
       motorSoftLimitReverse = 0,
       motorHomingSpeed = 0.3,
       motorHomedPosition = 0
     ))
         
-    ROLLERS_CONFIG = VelocityControlModuleConfig("Intake/Rollers", 17, True, VelocityControlModuleConstants(
+    ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig("Intake/Rollers/Leader", 17, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60, 
+      motorCurrentLimit = 50, 
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -129,9 +129,15 @@ class Subsystems:
       motorVelocityConversionFactor = 2.0 / 1.0 
     ))
 
+    ROLLERS_FOLLOWER_CONFIG = FollowerModuleConfig("Intake/Rollers/Follower", 19, 17, True, FollowerModuleConstants(
+      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+      motorType = SparkLowLevel.MotorType.kBrushless,
+      motorCurrentLimit = ROLLERS_LEADER_CONFIG.constants.motorCurrentLimit
+    ))
+
     ARM_RETRACT_POSITION: float = 3.0
-    ARM_INTAKE_HARDSTOP_POSITION: float = 37.5
-    ARM_INTAKE_HOLD_POSITION: float = 40.0
+    ARM_INTAKE_HARDSTOP_POSITION: float = 47.0
+    ARM_INTAKE_HOLD_POSITION: float = ARM_CONFIG.constants.motorSoftLimitForward
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
 
   class Hopper:
@@ -150,7 +156,7 @@ class Subsystems:
     ELEVATOR_CONFIG = VelocityControlModuleConfig("Hopper/Elevator", 16, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 80,
+      motorCurrentLimit = 60,
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
