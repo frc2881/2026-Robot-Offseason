@@ -120,7 +120,7 @@ class Subsystems:
     ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig("Intake/Rollers/Leader", 17, True, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 50, 
+      motorCurrentLimit = 60, 
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
