@@ -83,6 +83,7 @@ class Game:
   def agitateHopper(self) -> Command:
     return (
       self._robot.hopper.reverse().withTimeout(constants.Subsystems.Hopper.AGITATION_TIMEOUT)
+      .deadlineFor(self._robot.intake.eject())
       .withName("Game:AgitateHopper")
     )
   

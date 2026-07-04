@@ -18,16 +18,17 @@ class Hopper(Subsystem):
     self._getHopperSensorDistance = getHopperSensorDistance
     self._getIndexerSensorHasTarget = getIndexerSensorHasTarget
 
-    self._indexer = VelocityControlModule(self._constants.INDEXER_CONFIG)
     self._elevator = VelocityControlModule(self._constants.ELEVATOR_CONFIG)
+    self._indexer = VelocityControlModule(self._constants.INDEXER_CONFIG)
 
     self._isReversing: bool = False
     self._isRunning: bool = False
 
     self._jamDetectionTimer = Timer()
+    self._indexerDelayTimer = Timer()
 
-    SmartDashboard.putNumber("Robot/Hopper/IndexerSpeedOverride", 0)
     SmartDashboard.putNumber("Robot/Hopper/ElevatorSpeedOverride", 0)
+    SmartDashboard.putNumber("Robot/Hopper/IndexerSpeedOverride", 0)
 
   def periodic(self) -> None:
     self._updateState()
@@ -35,13 +36,14 @@ class Hopper(Subsystem):
 
   def _updateState(self) -> None:
     if self._isReversing:
-      self._indexer.setSpeed(-self._constants.INDEXER_REVERSE_SPEED)
       self._elevator.setSpeed(-self._constants.ELEVATOR_REVERSE_SPEED)
+      self._indexer.setSpeed(-self._constants.INDEXER_REVERSE_SPEED)
     elif self._isRunning:
-      indexerSpeedOverride = SmartDashboard.getNumber("Robot/Hopper/IndexerSpeedOverride", 0)
       elevatorSpeedOverride = SmartDashboard.getNumber("Robot/Hopper/ElevatorSpeedOverride", 0)
-      self._indexer.setSpeed(self._constants.INDEXER_SPEED if indexerSpeedOverride == 0 else indexerSpeedOverride)
+      indexerSpeedOverride = SmartDashboard.getNumber("Robot/Hopper/IndexerSpeedOverride", 0)
       self._elevator.setSpeed(self._constants.ELEVATOR_SPEED if elevatorSpeedOverride == 0 else elevatorSpeedOverride)
+      if self._indexerDelayTimer.hasElapsed(0.5):
+        self._indexer.setSpeed(self._constants.INDEXER_SPEED if indexerSpeedOverride == 0 else indexerSpeedOverride)
     else:
       self.reset()
 
@@ -49,7 +51,7 @@ class Hopper(Subsystem):
     return cmd.runEnd(
       lambda: setattr(self, "_isRunning", isEnabled()),
       lambda: setattr(self, "_isRunning", False)
-    )
+    ).beforeStarting(lambda: self._indexerDelayTimer.restart())
   
   def reverse(self) -> Command:
     return cmd.startEnd(

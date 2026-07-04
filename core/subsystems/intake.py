@@ -26,6 +26,7 @@ class Intake(Subsystem):
     self._isRunning: bool = False
     self._isAgitating: bool = False
     self._isRetracting: bool = False
+    self._isEjecting: bool = False
 
     self._agitationTimer = Timer()
 
@@ -45,22 +46,21 @@ class Intake(Subsystem):
     elif self._isAgitating:
       time: units.seconds = 1.0
       range = Range(0.1, 0.9)
-      speed: units.percent = 0.3
+      speed: units.percent = 0.1
       match self._getFuelLevel():
         case FuelLevel.Full:
           range = Range(0.8, 1.0)
-          speed = 0.1
         case FuelLevel.Mid:
           range = Range(0.4, 0.7)
-          speed = 0.2
         case _:
           range = Range(0.1, 0.3)
-          speed = 0.3
       self._agitationTimer.advanceIfElapsed(time)
       position = self._constants.ARM_INTAKE_HARDSTOP_POSITION * (range.min if self._agitationTimer.get() < time * 0.6 else range.max)
       if self._arm.getTargetPosition() != position:
           self._arm.setPosition(position)  
       self._rollersLeader.setSpeed(speed)
+    elif self._isEjecting:
+      self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:
       if not self.isHoming():
         self.reset()
@@ -82,6 +82,12 @@ class Intake(Subsystem):
       lambda: setattr(self, "_isAgitating", True),
       lambda: setattr(self, "_isAgitating", False)
     ).beforeStarting(lambda: self._agitationTimer.restart())
+  
+  def eject(self) -> Command:
+    return cmd.startEnd(
+      lambda: setattr(self, "_isEjecting", True),
+      lambda: setattr(self, "_isEjecting", False)
+    )
 
   def isExtended(self) -> bool:
     return self._arm.getPosition() > self._constants.ARM_INTAKE_HARDSTOP_POSITION * 0.75
