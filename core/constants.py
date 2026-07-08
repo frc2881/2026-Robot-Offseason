@@ -170,8 +170,8 @@ class Subsystems:
     INDEXER_REVERSE_SPEED: units.percent = 0.8
     ELEVATOR_REVERSE_SPEED: units.percent = 0.8
 
-    AGITATION_TIMEOUT: units.seconds = 0.5
-    JAM_DETECTION_TIMEOUT: units.seconds = 3.0
+    INDEXER_RUN_DELAY: units.seconds = 0.75
+    REVERSE_TIMEOUT: units.seconds = 1.0
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
       FuelLevel.Full: 200,
       FuelLevel.Mid: 325,

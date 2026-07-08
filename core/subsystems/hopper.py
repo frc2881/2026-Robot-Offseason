@@ -24,11 +24,7 @@ class Hopper(Subsystem):
     self._isReversing: bool = False
     self._isRunning: bool = False
 
-    self._jamDetectionTimer = Timer()
-    self._indexerDelayTimer = Timer()
-
-    SmartDashboard.putNumber("Robot/Hopper/ElevatorSpeedOverride", 0)
-    SmartDashboard.putNumber("Robot/Hopper/IndexerSpeedOverride", 0)
+    self._indexerRunDelayTimer = Timer()
 
   def periodic(self) -> None:
     self._updateState()
@@ -39,11 +35,9 @@ class Hopper(Subsystem):
       self._elevator.setSpeed(-self._constants.ELEVATOR_REVERSE_SPEED)
       self._indexer.setSpeed(-self._constants.INDEXER_REVERSE_SPEED)
     elif self._isRunning:
-      elevatorSpeedOverride = SmartDashboard.getNumber("Robot/Hopper/ElevatorSpeedOverride", 0)
-      indexerSpeedOverride = SmartDashboard.getNumber("Robot/Hopper/IndexerSpeedOverride", 0)
-      self._elevator.setSpeed(self._constants.ELEVATOR_SPEED if elevatorSpeedOverride == 0 else elevatorSpeedOverride)
-      if self._indexerDelayTimer.hasElapsed(0.5):
-        self._indexer.setSpeed(self._constants.INDEXER_SPEED if indexerSpeedOverride == 0 else indexerSpeedOverride)
+      self._elevator.setSpeed(self._constants.ELEVATOR_SPEED)
+      if self._indexerRunDelayTimer.hasElapsed(self._constants.INDEXER_RUN_DELAY):
+        self._indexer.setSpeed(self._constants.INDEXER_SPEED)
     else:
       self.reset()
 
@@ -51,7 +45,9 @@ class Hopper(Subsystem):
     return cmd.runEnd(
       lambda: setattr(self, "_isRunning", isEnabled()),
       lambda: setattr(self, "_isRunning", False)
-    ).beforeStarting(lambda: self._indexerDelayTimer.restart())
+    ).beforeStarting(
+      lambda: self._indexerRunDelayTimer.restart()
+    )
   
   def reverse(self) -> Command:
     return cmd.startEnd(
@@ -77,19 +73,6 @@ class Hopper(Subsystem):
         return FuelLevel.Low
     return FuelLevel.Empty
   
-  def isJammed(self) -> bool:
-    if (
-      self.isRunning() and 
-      not self._getIndexerSensorHasTarget() and 
-      self.getFuelLevel() != FuelLevel.Empty and 
-      self._jamDetectionTimer.hasElapsed(self._constants.JAM_DETECTION_TIMEOUT)
-    ):
-      return True
-    else:
-      self._jamDetectionTimer.restart()
-      return False
-
   def _updateTelemetry(self) -> None:
     SmartDashboard.putString("Robot/Hopper/FuelLevel", self.getFuelLevel().name)
     SmartDashboard.putBoolean("Robot/Hopper/IsRunning", self.isRunning())
-    SmartDashboard.putBoolean("Robot/Hopper/IsJammed", self.isJammed())

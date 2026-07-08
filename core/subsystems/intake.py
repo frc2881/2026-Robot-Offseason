@@ -26,7 +26,7 @@ class Intake(Subsystem):
     self._isRunning: bool = False
     self._isAgitating: bool = False
     self._isRetracting: bool = False
-    self._isEjecting: bool = False
+    self._isReversing: bool = False
 
     self._agitationTimer = Timer()
 
@@ -59,7 +59,7 @@ class Intake(Subsystem):
       if self._arm.getTargetPosition() != position:
           self._arm.setPosition(position)  
       self._rollersLeader.setSpeed(speed)
-    elif self._isEjecting:
+    elif self._isReversing:
       self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:
       if not self.isHoming():
@@ -81,12 +81,14 @@ class Intake(Subsystem):
     return cmd.runEnd(
       lambda: setattr(self, "_isAgitating", True),
       lambda: setattr(self, "_isAgitating", False)
-    ).beforeStarting(lambda: self._agitationTimer.restart())
+    ).beforeStarting(
+      lambda: self._agitationTimer.restart()
+    )
   
-  def eject(self) -> Command:
+  def reverse(self) -> Command:
     return cmd.startEnd(
-      lambda: setattr(self, "_isEjecting", True),
-      lambda: setattr(self, "_isEjecting", False)
+      lambda: setattr(self, "_isReversing", True),
+      lambda: setattr(self, "_isReversing", False)
     )
 
   def isExtended(self) -> bool:

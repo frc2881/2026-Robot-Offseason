@@ -80,18 +80,18 @@ class Game:
       .withName("Game:RetractIntake")
     )
 
-  def agitateHopper(self) -> Command:
+  def reverseHopper(self) -> Command:
     return (
-      self._robot.hopper.reverse().withTimeout(constants.Subsystems.Hopper.AGITATION_TIMEOUT)
-      .deadlineFor(self._robot.intake.eject())
-      .withName("Game:AgitateHopper")
+      self._robot.hopper.reverse().withTimeout(constants.Subsystems.Hopper.REVERSE_TIMEOUT)
+      .deadlineFor(self._robot.intake.reverse())
+      .withName("Game:ReverseHopper")
     )
   
   def agitateRobot(self) -> Command:
     return (
       (
-        (self._robot.drive.drive(lambda: 0.15, lambda: 0, lambda: 0).withTimeout(0.1))
-        .andThen(self._robot.drive.drive(lambda: -0.15, lambda: 0, lambda: 0).withTimeout(0.1))
+        (self._robot.drive.drive(lambda: 0.1, lambda: 0.1, lambda: 0).withTimeout(0.1))
+        .andThen(self._robot.drive.drive(lambda: -0.1, lambda: -0.1, lambda: 0).withTimeout(0.1))
         .andThen(self._robot.drive.drive(lambda: 0, lambda: 0, lambda: 0).withTimeout(0.02))
       )
       .finallyDo(lambda end: self._robot.drive.reset())

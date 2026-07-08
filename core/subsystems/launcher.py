@@ -21,9 +21,6 @@ class Launcher(Subsystem):
     self._launcherFollower.setIdleMode(MotorIdleMode.Coast)
     self._launcherAccelerator.setIdleMode(MotorIdleMode.Coast)
 
-    SmartDashboard.putNumber("Robot/Launcher/SpeedOverride", 0)
-    SmartDashboard.putNumber("Robot/Launcher/AcceleratorSpeedRatioOverride", 0)
-
   def periodic(self) -> None:
     self._updateTelemetry()
 
@@ -34,11 +31,8 @@ class Launcher(Subsystem):
     )
   
   def _setSpeed(self, speed: units.percent) -> None:
-    launcherSpeedOverride = SmartDashboard.getNumber("Robot/Launcher/SpeedOverride", 0)
-    acceleratorSpeedRatioOverride = SmartDashboard.getNumber("Robot/Launcher/AcceleratorSpeedRatioOverride", 0)
-    if launcherSpeedOverride != 0: speed = launcherSpeedOverride
     self._launcherLeader.setSpeed(speed)
-    self._launcherAccelerator.setSpeed(speed * (self._constants.LAUNCHER_ACCELERATOR_SPEED_RATIO if acceleratorSpeedRatioOverride == 0 else acceleratorSpeedRatioOverride))
+    self._launcherAccelerator.setSpeed(speed * self._constants.LAUNCHER_ACCELERATOR_SPEED_RATIO)
   
   def isAtTargetSpeed(self) -> bool:
     return self._launcherLeader.isAtTargetSpeed() and self._launcherAccelerator.isAtTargetSpeed()

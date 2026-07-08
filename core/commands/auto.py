@@ -42,11 +42,11 @@ class Auto:
     self._autos.setDefaultOption("0: None", self.auto_NONE)
     
     self._autos.addOption("1: Bump Left Loop", self.auto_BUMP_LEFT_LOOP)
-    self._autos.addOption("2: Bump Left Center", self.auto_BUMP_LEFT_CENTER)
-    self._autos.addOption("3: Bump Right Loop", self.auto_BUMP_RIGHT_LOOP)
-    self._autos.addOption("4: Bump Right Center", self.auto_BUMP_RIGHT_CENTER)
-    self._autos.addOption("5: Hub Depot", self.auto_HUB_DEPOT)
-    self._autos.addOption("6: Custom", self.auto_CUSTOM)
+    # self._autos.addOption("2: Bump Left Center", self.auto_BUMP_LEFT_CENTER)
+    self._autos.addOption("2: Bump Right Loop", self.auto_BUMP_RIGHT_LOOP)
+    # self._autos.addOption("4: Bump Right Center", self.auto_BUMP_RIGHT_CENTER)
+    self._autos.addOption("3: Hub Depot", self.auto_HUB_DEPOT)
+    # self._autos.addOption("6: Custom", self.auto_CUSTOM)
 
     self._autos.onChange(lambda auto: self.set(auto()))
     SmartDashboard.putData("Robot/Auto", self._autos)
