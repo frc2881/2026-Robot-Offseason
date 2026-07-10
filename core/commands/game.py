@@ -114,7 +114,7 @@ class Game:
         self._robot.launcher.run_(lambda: self._robot.targeting.getActiveTargetInfo().speed),
         cmd.waitUntil(lambda: self._robot.launcher.isAtTargetSpeed()).withTimeout(constants.Game.Commands.LAUNCHER_READY_TIMEOUT).andThen(
           self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange())
-          # .deadlineFor(self._robot.intake.agitate())
+          .deadlineFor(self._robot.intake.agitate())
         )
       )
       .onlyIf(lambda: self._robot.targeting.getActiveTarget() is not None)
