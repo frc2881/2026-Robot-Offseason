@@ -340,7 +340,7 @@ class Game:
     NAME: str = "Rosetta Stone (Offseason)"
 
   class Commands:
-    LAUNCHER_READY_TIMEOUT: units.seconds = 1.0
+    LAUNCHER_READY_TIMEOUT: units.seconds = 0.5
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 4.0
     BUMP_TRAVERSAL_DISTANCE: units.meters = 4.5
 
