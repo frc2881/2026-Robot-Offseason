@@ -124,9 +124,9 @@ class Subsystems:
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionMaxVelocity = 12000.0,
-      motorMotionMaxAcceleration = 24000.0,
-      motorVelocityConversionFactor = 2.0 / 1.0 
+      motorMotionMaxVelocity = 6000.0,
+      motorMotionMaxAcceleration = 12000.0,
+      motorVelocityConversionFactor = 1.0 / 2.0 
     ))
 
     ROLLERS_FOLLOWER_CONFIG = FollowerModuleConfig("Intake/Rollers/Follower", 19, 17, True, FollowerModuleConstants(
@@ -148,9 +148,9 @@ class Subsystems:
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionMaxVelocity = 12000.0, 
+      motorMotionMaxVelocity = 6000.0, 
       motorMotionMaxAcceleration = 12000.0,
-      motorVelocityConversionFactor = 3.0 / 1.0
+      motorVelocityConversionFactor = 1.0 / 3.0
     ))
 
     ELEVATOR_CONFIG = VelocityControlModuleConfig("Hopper/Elevator", 16, False, VelocityControlModuleConstants(
@@ -160,9 +160,9 @@ class Subsystems:
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionMaxVelocity = 12000.0,
+      motorMotionMaxVelocity = 6000.0,
       motorMotionMaxAcceleration = 12000.0,
-      motorVelocityConversionFactor = 3.0 / 1.0
+      motorVelocityConversionFactor = 1.0 / 3.0
     ))
     
     INDEXER_SPEED: units.percent = 1.0
@@ -170,8 +170,8 @@ class Subsystems:
     INDEXER_REVERSE_SPEED: units.percent = 0.8
     ELEVATOR_REVERSE_SPEED: units.percent = 0.8
 
-    INDEXER_RUN_DELAY: units.seconds = 0.75
-    REVERSE_TIMEOUT: units.seconds = 1.0
+    INDEXER_RUN_DELAY: units.seconds = 0.5
+    REVERSE_TIMEOUT: units.seconds = 1.5
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
       FuelLevel.Full: 200,
       FuelLevel.Mid: 325,
@@ -231,7 +231,7 @@ class Subsystems:
     ))
 
     LAUNCHER_TRANSFORM = Transform3d(units.inchesToMeters(-4.75), units.inchesToMeters(7.875), units.inchesToMeters(25.3375), Rotation3d())
-    LAUNCHER_ACCELERATOR_SPEED_RATIO: units.percent = 1.25
+    LAUNCHER_ACCELERATOR_SPEED_RATIO: units.percent = 1.0
 
 class Services:
   class Localization:

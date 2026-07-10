@@ -83,8 +83,13 @@ class Game:
   def reverseHopper(self) -> Command:
     return (
       self._robot.hopper.reverse().withTimeout(constants.Subsystems.Hopper.REVERSE_TIMEOUT)
-      .deadlineFor(self._robot.intake.reverse())
       .withName("Game:ReverseHopper")
+    )
+  
+  def reverseIntake(self) -> Command:
+    return (
+      self._robot.intake.reverse()
+      .withName("Game:ReverseIntake")
     )
   
   def agitateRobot(self) -> Command:
@@ -109,7 +114,7 @@ class Game:
         self._robot.launcher.run_(lambda: self._robot.targeting.getActiveTargetInfo().speed),
         cmd.waitUntil(lambda: self._robot.launcher.isAtTargetSpeed()).withTimeout(constants.Game.Commands.LAUNCHER_READY_TIMEOUT).andThen(
           self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange())
-          .deadlineFor(self._robot.intake.agitate())
+          # .deadlineFor(self._robot.intake.agitate())
         )
       )
       .onlyIf(lambda: self._robot.targeting.getActiveTarget() is not None)

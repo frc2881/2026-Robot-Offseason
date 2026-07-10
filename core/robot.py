@@ -112,7 +112,7 @@ class RobotCore:
     self.operator.a().whileTrue(self.game.alignTurretToActiveTarget())
     # self.operator.b().whileTrue(cmd.none())
     self.operator.y().whileTrue(self.game.alignTurretToHeading(0))
-    # self.operator.x().whileTrue(cmd.none())
+    self.operator.x().whileTrue(self.game.reverseIntake())
     # self.operator.povLeft().whileTrue(cmd.none())
     # self.operator.povRight().whileTrue(cmd.none())
     self.operator.povUp().debounce(0.5).whileTrue(self.turret.resetToHome())
