@@ -42,23 +42,22 @@ class Intake(Subsystem):
     elif self._isRetracting:
       if self._arm.getTargetPosition() != self._constants.ARM_RETRACT_POSITION:
         self._arm.setPosition(self._constants.ARM_RETRACT_POSITION)
-      self._rollersLeader.setSpeed(0)
+      self._rollersLeader.setSpeed(self._constants.ROLLERS_INTAKE_SPEED)
     elif self._isAgitating:
       time: units.seconds = 1.0
-      range = Range(0.1, 0.9)
-      speed: units.percent = 0.1
+      range = Range(1.0, 1.0)
       match self._getFuelLevel():
         case FuelLevel.Full:
-          range = Range(0.8, 1.0)
+          range = Range(1.0, 1.0)
         case FuelLevel.Mid:
-          range = Range(0.4, 0.7)
+          range = Range(0.7, 0.9)
         case _:
-          range = Range(0.1, 0.3)
+          range = Range(0.5, 0.7)
       self._agitationTimer.advanceIfElapsed(time)
-      position = self._constants.ARM_INTAKE_HARDSTOP_POSITION * (range.min if self._agitationTimer.get() < time * 0.6 else range.max)
+      position = self._constants.ARM_INTAKE_HARDSTOP_POSITION * (range.max if self._agitationTimer.get() < time * 0.5 else range.min)
       if self._arm.getTargetPosition() != position:
           self._arm.setPosition(position)  
-      self._rollersLeader.setSpeed(speed)
+      self._rollersLeader.setSpeed(0.5)
     elif self._isReversing:
       self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:

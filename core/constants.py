@@ -100,12 +100,12 @@ class Subsystems:
     INPUT_RATE_LIMIT_DEMO: units.percent = 0.5
 
   class Intake:
-    ARM_CONFIG = RelativePositionControlModuleConfig("Intake/Arm", 18, True, RelativePositionControlModuleConstants(
+    ARM_CONFIG = RelativePositionControlModuleConfig("Intake/Arm", 18, False, RelativePositionControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 50,
-      motorPID = PID(0.3, 0, 0),
-      motorOutputRange = Range(-1.0, 0.5),
+      motorCurrentLimit = 60,
+      motorPID = PID(1.0, 0, 0),
+      motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
@@ -117,7 +117,7 @@ class Subsystems:
       motorHomedPosition = 0
     ))
         
-    ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig("Intake/Rollers/Leader", 17, True, VelocityControlModuleConstants(
+    ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig("Intake/Rollers/Leader", 17, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60, 
@@ -135,10 +135,10 @@ class Subsystems:
       motorCurrentLimit = ROLLERS_LEADER_CONFIG.constants.motorCurrentLimit
     ))
 
-    ARM_RETRACT_POSITION: float = 3.0
-    ARM_INTAKE_HARDSTOP_POSITION: float = 47.0
+    ARM_RETRACT_POSITION: float = 15.0
+    ARM_INTAKE_HARDSTOP_POSITION: float = 50.0
     ARM_INTAKE_HOLD_POSITION: float = ARM_CONFIG.constants.motorSoftLimitForward
-    ROLLERS_INTAKE_SPEED: units.percent = 1.0
+    ROLLERS_INTAKE_SPEED: units.percent = 0.5
 
   class Hopper:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
