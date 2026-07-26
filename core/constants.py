@@ -105,7 +105,7 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-0.4, 1.0),
+      motorOutputRange = Range(-0.25, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
@@ -120,13 +120,13 @@ class Subsystems:
     ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig("Intake/Rollers/Leader", 17, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60, 
+      motorCurrentLimit = 70, 
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionMaxVelocity = 6000.0,
-      motorMotionMaxAcceleration = 12000.0,
-      motorVelocityConversionFactor = 1.0 / 2.0 
+      motorMotionMaxVelocity = 12000.0,
+      motorMotionMaxAcceleration = 24000.0,
+      motorVelocityConversionFactor = 1.0 / 3.0 
     ))
 
     ROLLERS_FOLLOWER_CONFIG = FollowerModuleConfig("Intake/Rollers/Follower", 19, 17, True, FollowerModuleConstants(
@@ -173,8 +173,8 @@ class Subsystems:
     INDEXER_RUN_DELAY: units.seconds = 0.5
     REVERSE_TIMEOUT: units.seconds = 1.5
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
-      FuelLevel.Full: 250,
-      FuelLevel.Mid: 375,
+      FuelLevel.Full: 300,
+      FuelLevel.Mid: 400,
       FuelLevel.Low: 500
     }
 

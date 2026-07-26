@@ -72,7 +72,7 @@ class Auto:
   def auto_BUMP_LEFT_LOOP(self) -> Command:
     return cmd.sequence(
       self._move(AutoPath.BUMP_LEFT_LOOP).deadlineFor(
-        cmd.waitSeconds(1.25).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(200.0)))
+        cmd.waitSeconds(1.0).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(200.0)))
       ),
       self._robot.game.launchFuel().deadlineFor(
         cmd.waitSeconds(2.0).andThen(self._robot.game.agitateRobot())
@@ -82,7 +82,7 @@ class Auto:
   def auto_BUMP_RIGHT_LOOP(self) -> Command:
     return cmd.sequence(
       self._move(AutoPath.BUMP_RIGHT_LOOP).deadlineFor(
-        cmd.waitSeconds(1.25).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(165.0)))
+        cmd.waitSeconds(1.0).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(165.0)))
       ),
       self._robot.game.launchFuel().deadlineFor(
         cmd.waitSeconds(2.0).andThen(self._robot.game.agitateRobot())

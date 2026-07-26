@@ -1,9 +1,8 @@
 from typing import Callable
 from commands2 import Subsystem, Command, cmd
-from wpilib import SmartDashboard, Timer
-from wpimath import units
+from wpilib import SmartDashboard
 from lib import logger, utils
-from lib.classes import Range
+from lib.classes import MotorIdleMode
 from lib.components.relative_position_control_module import RelativePositionControlModule
 from lib.components.velocity_control_module import VelocityControlModule
 from lib.components.follower_module import FollowerModule
@@ -28,14 +27,13 @@ class Intake(Subsystem):
     self._isRetracting: bool = False
     self._isReversing: bool = False
 
-    self._agitationTimer = Timer()
-
   def periodic(self) -> None:
     self._updateState()
     self._updateTelemetry()
 
   def _updateState(self) -> None:
     if self._isRunning:
+      self._arm.setIdleMode(MotorIdleMode.Coast)
       if self._arm.getTargetPosition() != self._constants.ARM_INTAKE_HOLD_POSITION:
         self._arm.setPosition(self._constants.ARM_INTAKE_HOLD_POSITION)
       self._rollersLeader.setSpeed(self._constants.ROLLERS_INTAKE_SPEED if self.isExtended() else 0)
@@ -55,7 +53,7 @@ class Intake(Subsystem):
           if self._arm.getTargetPosition() == self._constants.ARM_INTAKE_HOLD_POSITION else
           self._constants.ARM_RETRACT_POSITION
         )
-      self._rollersLeader.setSpeed(0.25)
+      self._rollersLeader.setSpeed(0.2)
     elif self._isReversing:
       self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:
@@ -78,8 +76,6 @@ class Intake(Subsystem):
     return cmd.runEnd(
       lambda: setattr(self, "_isAgitating", True),
       lambda: setattr(self, "_isAgitating", False)
-    ).beforeStarting(
-      lambda: self._agitationTimer.restart()
     )
   
   def reverse(self) -> Command:
