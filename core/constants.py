@@ -105,7 +105,7 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-1.0, 1.0),
+      motorOutputRange = Range(-0.4, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
@@ -135,7 +135,7 @@ class Subsystems:
       motorCurrentLimit = ROLLERS_LEADER_CONFIG.constants.motorCurrentLimit
     ))
 
-    ARM_RETRACT_POSITION: float = 27.0
+    ARM_RETRACT_POSITION: float = 30.0
     ARM_INTAKE_HARDSTOP_POSITION: float = 50.0
     ARM_INTAKE_HOLD_POSITION: float = ARM_CONFIG.constants.motorSoftLimitForward
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
@@ -173,9 +173,9 @@ class Subsystems:
     INDEXER_RUN_DELAY: units.seconds = 0.5
     REVERSE_TIMEOUT: units.seconds = 1.5
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
-      FuelLevel.Full: 200,
-      FuelLevel.Mid: 325,
-      FuelLevel.Low: 450
+      FuelLevel.Full: 250,
+      FuelLevel.Mid: 375,
+      FuelLevel.Low: 500
     }
 
   class Turret:

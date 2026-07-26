@@ -12,11 +12,7 @@ if TYPE_CHECKING: from core.robot import RobotCore
 
 class AutoPath(Enum):
   BUMP_LEFT_LOOP = auto()
-  BUMP_LEFT_CENTER_OUT = auto()
-  BUMP_LEFT_CENTER_IN = auto()
   BUMP_RIGHT_LOOP = auto()
-  BUMP_RIGHT_CENTER_OUT = auto()
-  BUMP_RIGHT_CENTER_IN = auto()
   HUB_DEPOT = auto()
   CUSTOM = auto()
 
@@ -42,9 +38,7 @@ class Auto:
     self._autos.setDefaultOption("0: None", self.auto_NONE)
     
     self._autos.addOption("1: Bump Left Loop", self.auto_BUMP_LEFT_LOOP)
-    # self._autos.addOption("2: Bump Left Center", self.auto_BUMP_LEFT_CENTER)
     self._autos.addOption("2: Bump Right Loop", self.auto_BUMP_RIGHT_LOOP)
-    # self._autos.addOption("4: Bump Right Center", self.auto_BUMP_RIGHT_CENTER)
     self._autos.addOption("3: Hub Depot", self.auto_HUB_DEPOT)
     # self._autos.addOption("6: Custom", self.auto_CUSTOM)
 
@@ -85,19 +79,6 @@ class Auto:
       )
     ).withName("Auto:BUMP_LEFT_LOOP")
 
-  def auto_BUMP_LEFT_CENTER(self) -> Command:
-    return cmd.sequence(
-      self._move(AutoPath.BUMP_LEFT_CENTER_OUT).deadlineFor(
-        cmd.waitSeconds(1.25).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(200.0)))
-      ),
-      (cmd.waitSeconds(constants.Game.Commands.CENTER_AUTO_HOLD_TIMEOUT).andThen(self._move(AutoPath.BUMP_LEFT_CENTER_IN))).deadlineFor(
-        self._robot.game.runIntake()
-      ),
-      self._robot.game.launchFuel().deadlineFor(
-        cmd.waitSeconds(2.0).andThen(self._robot.game.agitateRobot())
-      )
-    ).withName("Auto:BUMP_LEFT_CENTER")
-
   def auto_BUMP_RIGHT_LOOP(self) -> Command:
     return cmd.sequence(
       self._move(AutoPath.BUMP_RIGHT_LOOP).deadlineFor(
@@ -107,19 +88,6 @@ class Auto:
         cmd.waitSeconds(2.0).andThen(self._robot.game.agitateRobot())
       )
     ).withName("Auto:BUMP_RIGHT_LOOP")
-
-  def auto_BUMP_RIGHT_CENTER(self) -> Command:
-    return cmd.sequence(
-      self._move(AutoPath.BUMP_RIGHT_CENTER_OUT).deadlineFor(
-        cmd.waitSeconds(1.25).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(165.0)))
-      ),
-      (cmd.waitSeconds(constants.Game.Commands.CENTER_AUTO_HOLD_TIMEOUT).andThen(self._move(AutoPath.BUMP_RIGHT_CENTER_IN))).deadlineFor(
-        self._robot.game.runIntake()
-      ),
-      self._robot.game.launchFuel().deadlineFor(
-        cmd.waitSeconds(2.0).andThen(self._robot.game.agitateRobot())
-      )
-    ).withName("Auto:BUMP_RIGHT_CENTER")
 
   def auto_HUB_DEPOT(self) -> Command:
     return cmd.sequence(

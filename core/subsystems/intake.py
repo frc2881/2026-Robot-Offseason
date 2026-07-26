@@ -43,12 +43,19 @@ class Intake(Subsystem):
       if self._arm.getTargetPosition() != self._constants.ARM_RETRACT_POSITION:
         self._arm.setPosition(self._constants.ARM_RETRACT_POSITION)
     elif self._isAgitating:
-      position = self._constants.ARM_INTAKE_HARDSTOP_POSITION - (self._agitationTimer.get() * 7)
-      if position > self._constants.ARM_RETRACT_POSITION:
-        self._arm.setPosition(position)
-        self._rollersLeader.setSpeed(0.5)
+      if self._arm.isAtTargetPosition():
+        self._arm.setPosition(
+          self._constants.ARM_RETRACT_POSITION
+          if self._arm.getTargetPosition() == self._constants.ARM_INTAKE_HOLD_POSITION else
+          self._constants.ARM_INTAKE_HOLD_POSITION
+        )
       else:
-        self._agitationTimer.restart()
+        self._arm.setPosition(
+          self._constants.ARM_INTAKE_HOLD_POSITION
+          if self._arm.getTargetPosition() == self._constants.ARM_INTAKE_HOLD_POSITION else
+          self._constants.ARM_RETRACT_POSITION
+        )
+      self._rollersLeader.setSpeed(0.25)
     elif self._isReversing:
       self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:

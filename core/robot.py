@@ -90,7 +90,7 @@ class RobotCore:
     # self.driver.leftTrigger().whileTrue(cmd.none())
     self.driver.leftBumper().whileTrue(self.game.alignAndMoveRobotOverBump())
     # self.driver.rightTrigger().whileTrue(cmd.none())
-    # self.driver.rightBumper().whileTrue(cmd.none())
+    self.driver.rightBumper().whileTrue(self.game.agitateRobot())
     # self.driver.a().whileTrue(cmd.none())
     # self.driver.b().whileTrue(cmd.none())
     # self.driver.y().whileTrue(cmd.none())

@@ -95,8 +95,8 @@ class Game:
   def agitateRobot(self) -> Command:
     return (
       (
-        (self._robot.drive.drive(lambda: 0.1, lambda: 0.1, lambda: 0).withTimeout(0.1))
-        .andThen(self._robot.drive.drive(lambda: -0.1, lambda: -0.1, lambda: 0).withTimeout(0.1))
+        (self._robot.drive.drive(lambda: 0.15, lambda: 0.15, lambda: 0).withTimeout(0.1))
+        .andThen(self._robot.drive.drive(lambda: -0.15, lambda: -0.15, lambda: 0).withTimeout(0.1))
         .andThen(self._robot.drive.drive(lambda: 0, lambda: 0, lambda: 0).withTimeout(0.02))
       )
       .finallyDo(lambda end: self._robot.drive.reset())
@@ -114,7 +114,7 @@ class Game:
         self._robot.launcher.run_(lambda: self._robot.targeting.getActiveTargetInfo().speed),
         cmd.waitUntil(lambda: self._robot.launcher.isAtTargetSpeed()).withTimeout(constants.Game.Commands.LAUNCHER_READY_TIMEOUT).andThen(
           self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange())
-          .deadlineFor(self._robot.intake.agitate())
+          .deadlineFor(cmd.waitSeconds(1.5).andThen(self._robot.intake.agitate()))
         )
       )
       .onlyIf(lambda: self._robot.targeting.getActiveTarget() is not None)
