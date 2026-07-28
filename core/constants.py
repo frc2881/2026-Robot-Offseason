@@ -125,8 +125,7 @@ class Subsystems:
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionMaxVelocity = 12000.0,
-      motorMotionMaxAcceleration = 24000.0,
-      motorVelocityConversionFactor = 1.0 / 3.0 
+      motorMotionMaxAcceleration = 24000.0
     ))
 
     ROLLERS_FOLLOWER_CONFIG = FollowerModuleConfig("Intake/Rollers/Follower", 19, 17, True, FollowerModuleConstants(
@@ -149,8 +148,7 @@ class Subsystems:
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionMaxVelocity = 6000.0, 
-      motorMotionMaxAcceleration = 12000.0,
-      motorVelocityConversionFactor = 1.0 / 3.0
+      motorMotionMaxAcceleration = 12000.0
     ))
 
     ELEVATOR_CONFIG = VelocityControlModuleConfig("Hopper/Elevator", 16, False, VelocityControlModuleConstants(
@@ -161,8 +159,7 @@ class Subsystems:
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionMaxVelocity = 6000.0,
-      motorMotionMaxAcceleration = 12000.0,
-      motorVelocityConversionFactor = 1.0 / 3.0
+      motorMotionMaxAcceleration = 12000.0
     ))
     
     INDEXER_SPEED: units.percent = 1.0
@@ -208,8 +205,7 @@ class Subsystems:
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionMaxVelocity = 6000.0,
-      motorMotionMaxAcceleration = 12000.0,
-      motorVelocityConversionFactor = 1.0
+      motorMotionMaxAcceleration = 12000.0
     ))
 
     LAUNCHER_FOLLOWER_CONFIG = FollowerModuleConfig("Launcher/Follower", 11, 10, True, FollowerModuleConstants(
@@ -226,8 +222,7 @@ class Subsystems:
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionMaxVelocity = 6000.0,
-      motorMotionMaxAcceleration = 12000.0,
-      motorVelocityConversionFactor = 1.0
+      motorMotionMaxAcceleration = 12000.0
     ))
 
     LAUNCHER_TRANSFORM = Transform3d(units.inchesToMeters(-4.75), units.inchesToMeters(7.875), units.inchesToMeters(25.3375), Rotation3d())
