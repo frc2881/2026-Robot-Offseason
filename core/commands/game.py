@@ -121,7 +121,19 @@ class Game:
       .onlyWhile(lambda: self._robot.targeting.getActiveTarget() is not None)
       .withName("Game:LaunchFuel")
     )
-  
+
+  def launchFuelDemo(self) -> Command:
+    return (
+      self.alignTurretToHeading(0)
+      .deadlineFor(
+        self._robot.launcher.run_(lambda: 0.25),
+        cmd.waitUntil(lambda: self._robot.launcher.isAtTargetSpeed()).withTimeout(constants.Game.Commands.LAUNCHER_READY_TIMEOUT).andThen(
+          self._robot.hopper.run_(lambda: True)
+        )
+      )
+      .withName("Game:LaunchFuelDemo")
+    )
+
   def resetGyro(self) -> Command:
     return (
       self._robot.gyro.reset()
