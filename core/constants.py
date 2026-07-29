@@ -135,9 +135,10 @@ class Subsystems:
     ))
 
     ARM_RETRACT_POSITION: float = 30.0
-    ARM_INTAKE_HARDSTOP_POSITION: float = 50.0
-    ARM_INTAKE_HOLD_POSITION: float = ARM_CONFIG.constants.motorSoftLimitForward
+    ARM_INTAKE_POSITION: float = ARM_CONFIG.constants.motorSoftLimitForward
+    ARM_AGITATE_RANGE = Range(30.0, 45.0)
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
+    ROLLERS_AGITATE_SPEED: units.percent = 0.25
 
   class Hopper:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(

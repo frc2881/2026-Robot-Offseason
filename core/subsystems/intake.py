@@ -2,7 +2,7 @@ from typing import Callable
 from commands2 import Subsystem, Command, cmd
 from wpilib import SmartDashboard
 from lib import logger, utils
-from lib.classes import MotorIdleMode
+from lib.classes import RobotState, MotorIdleMode
 from lib.components.relative_position_control_module import RelativePositionControlModule
 from lib.components.velocity_control_module import VelocityControlModule
 from lib.components.follower_module import FollowerModule
@@ -26,16 +26,19 @@ class Intake(Subsystem):
     self._isAgitating: bool = False
     self._isRetracting: bool = False
     self._isReversing: bool = False
+    self._isEnabled: bool = False
 
   def periodic(self) -> None:
     self._updateState()
     self._updateTelemetry()
 
   def _updateState(self) -> None:
+    if self._isEnabled != utils.getRobotState() == RobotState.Enabled:
+      self._isEnabled = utils.getRobotState() == RobotState.Enabled
+      self._arm.setIdleMode(MotorIdleMode.Coast if self._isEnabled else MotorIdleMode.Brake)
     if self._isRunning:
-      self._arm.setIdleMode(MotorIdleMode.Coast)
-      if self._arm.getTargetPosition() != self._constants.ARM_INTAKE_HOLD_POSITION:
-        self._arm.setPosition(self._constants.ARM_INTAKE_HOLD_POSITION)
+      if self._arm.getTargetPosition() != self._constants.ARM_INTAKE_POSITION:
+        self._arm.setPosition(self._constants.ARM_INTAKE_POSITION)
       self._rollersLeader.setSpeed(self._constants.ROLLERS_INTAKE_SPEED if self.isExtended() else 0)
     elif self._isRetracting:
       if self._arm.getTargetPosition() != self._constants.ARM_RETRACT_POSITION:
@@ -43,17 +46,17 @@ class Intake(Subsystem):
     elif self._isAgitating:
       if self._arm.isAtTargetPosition():
         self._arm.setPosition(
-          self._constants.ARM_RETRACT_POSITION
-          if self._arm.getTargetPosition() == self._constants.ARM_INTAKE_HOLD_POSITION else
-          self._constants.ARM_INTAKE_HOLD_POSITION
+          self._constants.ARM_AGITATE_RANGE.min
+          if self._arm.getTargetPosition() == self._constants.ARM_AGITATE_RANGE.max else
+          self._constants.ARM_AGITATE_RANGE.max
         )
       else:
         self._arm.setPosition(
-          self._constants.ARM_INTAKE_HOLD_POSITION
-          if self._arm.getTargetPosition() == self._constants.ARM_INTAKE_HOLD_POSITION else
-          self._constants.ARM_RETRACT_POSITION
+          self._constants.ARM_AGITATE_RANGE.max
+          if self._arm.getTargetPosition() == self._constants.ARM_AGITATE_RANGE.max else
+          self._constants.ARM_AGITATE_RANGE.min
         )
-      self._rollersLeader.setSpeed(0.2)
+      self._rollersLeader.setSpeed(self._constants.ROLLERS_AGITATE_SPEED)
     elif self._isReversing:
       self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:
@@ -85,7 +88,7 @@ class Intake(Subsystem):
     )
 
   def isExtended(self) -> bool:
-    return self._arm.getPosition() > self._constants.ARM_INTAKE_HARDSTOP_POSITION * 0.75
+    return self._arm.getPosition() > self._constants.ARM_INTAKE_POSITION * 0.9
   
   def isRunning(self) -> bool:
     return self._rollersLeader.getSpeed() > 0.01
