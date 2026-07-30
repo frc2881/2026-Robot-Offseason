@@ -56,7 +56,7 @@ class Intake(Subsystem):
           if self._arm.getTargetPosition() == self._constants.ARM_AGITATE_RANGE.max else
           self._constants.ARM_AGITATE_RANGE.min
         )
-      self._rollersLeader.setSpeed(self._constants.ROLLERS_AGITATE_SPEED)
+      # self._rollersLeader.setSpeed(self._constants.ROLLERS_AGITATE_SPEED)
     elif self._isReversing:
       self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:

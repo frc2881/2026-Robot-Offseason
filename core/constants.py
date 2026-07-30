@@ -105,13 +105,13 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-0.25, 1.0),
+      motorOutputRange = Range(-0.5, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
       motorMotionAllowedProfileError = 0.5,
       motorRelativeEncoderPositionConversionFactor = 1.0,
-      motorSoftLimitForward = 50.0,
+      motorSoftLimitForward = 51.5,
       motorSoftLimitReverse = 0,
       motorHomingSpeed = 0.3,
       motorHomedPosition = 0
@@ -120,7 +120,7 @@ class Subsystems:
     ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig("Intake/Rollers/Leader", 17, False, VelocityControlModuleConstants(
       motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 70, 
+      motorCurrentLimit = 100, 
       motorPID = PID(0.0001, 0, 0),
       motorOutputRange = Range(-1.0, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
@@ -134,11 +134,11 @@ class Subsystems:
       motorCurrentLimit = ROLLERS_LEADER_CONFIG.constants.motorCurrentLimit
     ))
 
-    ARM_RETRACT_POSITION: float = 30.0
-    ARM_INTAKE_POSITION: float = ARM_CONFIG.constants.motorSoftLimitForward
-    ARM_AGITATE_RANGE = Range(30.0, 45.0)
+    ARM_RETRACT_POSITION: float = 29.5
+    ARM_INTAKE_POSITION: float = 51.0
+    ARM_AGITATE_RANGE = Range(38.0, 50.0)
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
-    ROLLERS_AGITATE_SPEED: units.percent = 0.25
+    ROLLERS_AGITATE_SPEED: units.percent = 0
 
   class Hopper:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
@@ -171,8 +171,8 @@ class Subsystems:
     INDEXER_RUN_DELAY: units.seconds = 0.5
     REVERSE_TIMEOUT: units.seconds = 1.5
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
-      FuelLevel.Full: 300,
-      FuelLevel.Mid: 400,
+      FuelLevel.Full: 350,
+      FuelLevel.Mid: 425,
       FuelLevel.Low: 500
     }
 
