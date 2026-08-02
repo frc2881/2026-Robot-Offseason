@@ -1,6 +1,6 @@
 from typing import Callable
 from commands2 import Subsystem, Command, cmd
-from wpilib import SmartDashboard
+from wpilib import SmartDashboard, Timer
 from lib import logger, utils
 from lib.classes import RobotState, MotorIdleMode
 from lib.components.relative_position_control_module import RelativePositionControlModule
@@ -28,6 +28,8 @@ class Intake(Subsystem):
     self._isReversing: bool = False
     self._isEnabled: bool = False
 
+    self._agitationTimer = Timer()
+
   def periodic(self) -> None:
     self._updateState()
     self._updateTelemetry()
@@ -44,19 +46,20 @@ class Intake(Subsystem):
       if self._arm.getTargetPosition() != self._constants.ARM_RETRACT_POSITION:
         self._arm.setPosition(self._constants.ARM_RETRACT_POSITION)
     elif self._isAgitating:
-      if self._arm.isAtTargetPosition():
+      if self._arm.isAtTargetPosition() or self._agitationTimer.hasElapsed(1.25):
         self._arm.setPosition(
           self._constants.ARM_AGITATE_RANGE.min
           if self._arm.getTargetPosition() == self._constants.ARM_AGITATE_RANGE.max else
           self._constants.ARM_AGITATE_RANGE.max
         )
+        self._agitationTimer.restart()
       else:
         self._arm.setPosition(
           self._constants.ARM_AGITATE_RANGE.max
           if self._arm.getTargetPosition() == self._constants.ARM_AGITATE_RANGE.max else
           self._constants.ARM_AGITATE_RANGE.min
         )
-      # self._rollersLeader.setSpeed(self._constants.ROLLERS_AGITATE_SPEED)
+      self._rollersLeader.setSpeed(self._constants.ROLLERS_AGITATE_SPEED)
     elif self._isReversing:
       self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
     else:
@@ -79,7 +82,7 @@ class Intake(Subsystem):
     return cmd.runEnd(
       lambda: setattr(self, "_isAgitating", True),
       lambda: setattr(self, "_isAgitating", False)
-    )
+    ).beforeStarting(lambda: self._agitationTimer.restart())
   
   def reverse(self) -> Command:
     return cmd.startEnd(
@@ -88,7 +91,7 @@ class Intake(Subsystem):
     )
 
   def isExtended(self) -> bool:
-    return self._arm.getPosition() > self._constants.ARM_INTAKE_POSITION * 0.9
+    return self._arm.getPosition() > self._constants.ARM_INTAKE_POSITION * 0.75
   
   def isRunning(self) -> bool:
     return self._rollersLeader.getSpeed() > 0.01

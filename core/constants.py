@@ -105,13 +105,13 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-0.5, 1.0),
+      motorOutputRange = Range(-0.75, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
       motorMotionAllowedProfileError = 0.5,
       motorRelativeEncoderPositionConversionFactor = 1.0,
-      motorSoftLimitForward = 51.5,
+      motorSoftLimitForward = 53.0,
       motorSoftLimitReverse = 0,
       motorHomingSpeed = 0.3,
       motorHomedPosition = 0
@@ -134,9 +134,9 @@ class Subsystems:
       motorCurrentLimit = ROLLERS_LEADER_CONFIG.constants.motorCurrentLimit
     ))
 
-    ARM_RETRACT_POSITION: float = 29.5
-    ARM_INTAKE_POSITION: float = 51.0
-    ARM_AGITATE_RANGE = Range(38.0, 50.0)
+    ARM_RETRACT_POSITION: float = 30.0
+    ARM_INTAKE_POSITION: float = 52.5
+    ARM_AGITATE_RANGE = Range(34.0, 51.0)
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
     ROLLERS_AGITATE_SPEED: units.percent = 0
 
@@ -227,7 +227,7 @@ class Subsystems:
     ))
 
     LAUNCHER_TRANSFORM = Transform3d(units.inchesToMeters(-4.75), units.inchesToMeters(7.875), units.inchesToMeters(25.3375), Rotation3d())
-    LAUNCHER_ACCELERATOR_SPEED_RATIO: units.percent = 1.0
+    LAUNCHER_ACCELERATOR_SPEED_RATIO: units.percent = 1.5
 
 class Services:
   class Localization:
@@ -272,7 +272,7 @@ class Sensors:
         name = "FrontLeft", 
         transform = Transform3d(
           Translation3d(x = units.inchesToMeters(-0.5), y = units.inchesToMeters(14.5), z = units.inchesToMeters(18.0)),
-          Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-6.4), yaw = units.degreesToRadians(88.0))
+          Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-5.5), yaw = units.degreesToRadians(88.0))
         ),
         stream = "http://10.28.81.6:1186/?action=stream",
         aprilTagFieldLayout = _aprilTagFieldLayout
@@ -281,7 +281,7 @@ class Sensors:
         name = "FrontRight",
         transform = Transform3d(
         Translation3d(x = units.inchesToMeters(1.0), y = units.inchesToMeters(-14.0), z = units.inchesToMeters(8.75)),
-        Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-19.0), yaw = units.degreesToRadians(-90.0))
+        Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-17.0), yaw = units.degreesToRadians(-90.0))
       ),
         stream = "http://10.28.81.7:1184/?action=stream",
         aprilTagFieldLayout = _aprilTagFieldLayout
@@ -290,7 +290,7 @@ class Sensors:
         name = "RearLeft",
         transform = Transform3d(
           Translation3d(x = units.inchesToMeters(-9.75), y = units.inchesToMeters(12.75), z = units.inchesToMeters(10.25)),
-          Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-34.4), yaw = units.degreesToRadians(160.0))
+          Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-33.5), yaw = units.degreesToRadians(160.0))
         ),
         stream = "http://10.28.81.6:1182/?action=stream",
         aprilTagFieldLayout = _aprilTagFieldLayout
@@ -299,7 +299,7 @@ class Sensors:
         name = "RearRight",
         transform = Transform3d(
           Translation3d(x = units.inchesToMeters(-9.75), y = units.inchesToMeters(-12.75), z = units.inchesToMeters(10.25)),
-          Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-32.5), yaw = units.degreesToRadians(-160.0))
+          Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-34.0), yaw = units.degreesToRadians(-160.0))
         ),
         stream = "http://10.28.81.7:1182/?action=stream",
         aprilTagFieldLayout = _aprilTagFieldLayout
@@ -336,9 +336,10 @@ class Game:
     NAME: str = "Rosetta Stone (Offseason)"
 
   class Commands:
-    LAUNCHER_READY_TIMEOUT: units.seconds = 0.5
+    LAUNCHER_READY_TIMEOUT: units.seconds = 0.75
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 4.0
     BUMP_TRAVERSAL_DISTANCE: units.meters = 4.5
+    INTAKE_AGITATE_DELAY: units.seconds = 1.5
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
