@@ -46,7 +46,7 @@ class Intake(Subsystem):
       if self._arm.getTargetPosition() != self._constants.ARM_RETRACT_POSITION:
         self._arm.setPosition(self._constants.ARM_RETRACT_POSITION)
     elif self._isAgitating:
-      if self._arm.isAtTargetPosition() or self._agitationTimer.hasElapsed(1.25):
+      if self._arm.isAtTargetPosition() or self._agitationTimer.hasElapsed(self._constants.ARM_AGITATE_TIMEOUT):
         self._arm.setPosition(
           self._constants.ARM_AGITATE_RANGE.min
           if self._arm.getTargetPosition() == self._constants.ARM_AGITATE_RANGE.max else

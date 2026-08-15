@@ -105,15 +105,15 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-0.75, 1.0),
+      motorOutputRange = Range(-0.8, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
       motorMotionAllowedProfileError = 0.5,
       motorRelativeEncoderPositionConversionFactor = 1.0,
-      motorSoftLimitForward = 53.0,
+      motorSoftLimitForward = 50.0,
       motorSoftLimitReverse = 0,
-      motorHomingSpeed = 0.3,
+      motorHomingSpeed = 0.5,
       motorHomedPosition = 0
     ))
         
@@ -134,11 +134,12 @@ class Subsystems:
       motorCurrentLimit = ROLLERS_LEADER_CONFIG.constants.motorCurrentLimit
     ))
 
-    ARM_RETRACT_POSITION: float = 30.0
-    ARM_INTAKE_POSITION: float = 52.5
-    ARM_AGITATE_RANGE = Range(34.0, 51.0)
+    ARM_RETRACT_POSITION: float = 10.0
+    ARM_INTAKE_POSITION: float = 48.0
+    ARM_AGITATE_RANGE = Range(15.0, 45.0)
+    ARM_AGITATE_TIMEOUT: units.seconds = 1.0
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
-    ROLLERS_AGITATE_SPEED: units.percent = 0
+    ROLLERS_AGITATE_SPEED: units.percent = 0.3
 
   class Hopper:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
@@ -339,7 +340,7 @@ class Game:
     LAUNCHER_READY_TIMEOUT: units.seconds = 0.75
     CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 4.0
     BUMP_TRAVERSAL_DISTANCE: units.meters = 4.5
-    INTAKE_AGITATE_DELAY: units.seconds = 1.5
+    INTAKE_AGITATE_DELAY: units.seconds = 2.0
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
