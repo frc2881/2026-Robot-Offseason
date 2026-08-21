@@ -22,6 +22,9 @@ class Intake(Subsystem):
     self._rollersLeader = VelocityControlModule(self._constants.ROLLERS_LEADER_CONFIG)
     self._rollersFollower = FollowerModule(self._constants.ROLLERS_FOLLOWER_CONFIG)
 
+    self._rollersLeader.setIdleMode(MotorIdleMode.Coast)
+    self._rollersFollower.setIdleMode(MotorIdleMode.Coast)
+
     self._isRunning: bool = False
     self._isAgitating: bool = False
     self._isRetracting: bool = False

@@ -136,10 +136,10 @@ class Subsystems:
 
     ARM_RETRACT_POSITION: float = 10.0
     ARM_INTAKE_POSITION: float = 48.0
-    ARM_AGITATE_RANGE = Range(15.0, 45.0)
+    ARM_AGITATE_RANGE = Range(24.0, 42.0)
     ARM_AGITATE_TIMEOUT: units.seconds = 1.0
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
-    ROLLERS_AGITATE_SPEED: units.percent = 0.3
+    ROLLERS_AGITATE_SPEED: units.percent = 0.1
 
   class Hopper:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
@@ -164,7 +164,7 @@ class Subsystems:
       motorMotionMaxAcceleration = 12000.0
     ))
     
-    INDEXER_SPEED: units.percent = 1.0
+    INDEXER_SPEED: units.percent = 0.65
     ELEVATOR_SPEED: units.percent = 1.0
     INDEXER_REVERSE_SPEED: units.percent = 0.8
     ELEVATOR_REVERSE_SPEED: units.percent = 0.8
