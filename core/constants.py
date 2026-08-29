@@ -105,7 +105,7 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-0.8, 1.0),
+      motorOutputRange = Range(-0.9, 1.0),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
@@ -136,7 +136,7 @@ class Subsystems:
 
     ARM_RETRACT_POSITION: float = 10.0
     ARM_INTAKE_POSITION: float = 48.0
-    ARM_AGITATE_RANGE = Range(24.0, 42.0)
+    ARM_AGITATE_RANGE = Range(28.0, 44.0)
     ARM_AGITATE_TIMEOUT: units.seconds = 1.0
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
     ROLLERS_AGITATE_SPEED: units.percent = 0.1
@@ -164,17 +164,17 @@ class Subsystems:
       motorMotionMaxAcceleration = 12000.0
     ))
     
-    INDEXER_SPEED: units.percent = 0.65
+    INDEXER_SPEED: units.percent = 0.75
     ELEVATOR_SPEED: units.percent = 1.0
     INDEXER_REVERSE_SPEED: units.percent = 0.8
     ELEVATOR_REVERSE_SPEED: units.percent = 0.8
 
-    INDEXER_RUN_DELAY: units.seconds = 0.5
-    REVERSE_TIMEOUT: units.seconds = 1.5
+    INDEXER_RUN_DELAY: units.seconds = 0.25
+    REVERSE_TIMEOUT: units.seconds = 2.0
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
-      FuelLevel.Full: 350,
-      FuelLevel.Mid: 425,
-      FuelLevel.Low: 500
+      FuelLevel.Full: 225,
+      FuelLevel.Mid: 350,
+      FuelLevel.Low: 475
     }
 
   class Turret:
@@ -338,9 +338,8 @@ class Game:
 
   class Commands:
     LAUNCHER_READY_TIMEOUT: units.seconds = 0.75
-    CENTER_AUTO_HOLD_TIMEOUT: units.seconds = 4.0
     BUMP_TRAVERSAL_DISTANCE: units.meters = 4.5
-    INTAKE_AGITATE_DELAY: units.seconds = 2.0
+    INTAKE_AGITATE_DELAY: units.seconds = 1.75
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
