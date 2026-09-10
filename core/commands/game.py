@@ -24,7 +24,13 @@ class Game:
       self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._robot.targeting.getNearestTargetPose(targets), alignRotationOnly)
       .withName("Game:AlignRobotToNearestTargetPose")
     )
-  
+
+  def alignRobotToTargetHeading(self, target: Target) -> Command:
+    return (
+      self._robot.drive.alignToTargetHeading(self._robot.localization.getRobotPose, lambda: self._robot.targeting.getTargetPose(target))
+      .withName(f'Game:AlignRobotToTargetHeading:{ target.name }')
+    )
+
   def alignAndMoveRobotOverBump(self) -> Command:
     return (
       self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])

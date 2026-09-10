@@ -19,6 +19,7 @@ from core.services.localization import Localization
 from core.services.targeting import Targeting
 from core.services.match import Match
 from core.services.lights import Lights
+from core.classes import Target
 import core.constants as constants
 
 class RobotCore:
@@ -86,7 +87,7 @@ class RobotCore:
   def _setupDriver(self) -> None:
     self.drive.setDefaultCommand(self.drive.drive(self.driver.getLeftY, self.driver.getLeftX, self.driver.getRightX))
     self.driver.leftStick().whileTrue(self.drive.lockSwerveModules())
-    # self.driver.rightStick().whileTrue(cmd.none())
+    self.driver.rightStick().whileTrue(self.game.alignRobotToTargetHeading(Target.Hub))
     # self.driver.leftTrigger().whileTrue(cmd.none())
     self.driver.leftBumper().whileTrue(self.game.alignAndMoveRobotOverBump())
     # self.driver.rightTrigger().whileTrue(cmd.none())
