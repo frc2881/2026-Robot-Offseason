@@ -264,7 +264,7 @@ class Services:
 
 class Sensors: 
   class Gyro:
-    NAVX2_COM_TYPE = navx.AHRS.NavXComType.kUSB1
+    NAVX_PORT = navx.AHRS.NavXComType.kUSB1
   
   class Pose:
     POSE_SENSOR_CONFIGS: tuple[PoseSensorConfig, ...] = (
