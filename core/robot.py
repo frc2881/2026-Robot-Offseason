@@ -4,7 +4,7 @@ from lib import logger, utils
 from lib.controllers.xbox import XboxController
 from lib.controllers.button import ButtonController
 from lib.classes import RobotState
-from lib.sensors.gyro_navx2 import Gyro_NAVX2
+from lib.sensors.gyro_navx2 import Gyro
 from lib.sensors.pose import PoseSensor
 from lib.sensors.distance import DistanceSensor
 from lib.sensors.binary import BinarySensor
@@ -34,7 +34,7 @@ class RobotCore:
     utils.addRobotPeriodic(self._periodic)
 
   def _initSensors(self) -> None:
-    self.gyro = Gyro_NAVX2(constants.Sensors.Gyro.NAVX_PORT)
+    self.gyro = Gyro(constants.Sensors.Gyro.NAVX_PORT)
     self.poseSensors = tuple(PoseSensor(c) for c in constants.Sensors.Pose.POSE_SENSOR_CONFIGS)
     self.hopperSensor = DistanceSensor(constants.Sensors.Distance.HOPPER_SENSOR_CONFIG)
     self.indexerSensor = BinarySensor(constants.Sensors.Binary.INDEXER_SENSOR_CONFIG)
