@@ -48,7 +48,7 @@ class RobotCore:
     
   def _initServices(self) -> None:
     self.localization = Localization(lambda: self.gyro.getHeading(), lambda: self.drive.getModulePositions(), self.poseSensors)
-    self.targeting = Targeting(lambda: self.localization.getRobotPose(), lambda: self.drive.getChassisSpeeds(), lambda: self.turret.getHeading())
+    self.targeting = Targeting(lambda: self.localization.getRobotPose(), lambda: self.localization.getRobotZone(), lambda: self.drive.getChassisSpeeds(), lambda: self.turret.getHeading())
     self.match = Match()
     self.lights = Lights(
       lambda: self.isHoming(), 
@@ -90,7 +90,7 @@ class RobotCore:
     self.driver.rightStick().whileTrue(self.game.alignRobotToTargetHeading(Target.Hub))
     # self.driver.leftTrigger().whileTrue(cmd.none())
     # self.driver.rightTrigger().whileTrue(cmd.none())
-    self.driver.leftBumper().whileTrue(self.game.alignAndMoveRobotOverBump())
+    self.driver.leftBumper().whileTrue(self.game.driveRobotOverBump())
     self.driver.rightBumper().whileTrue(self.game.agitateRobot())
     # self.driver.a().whileTrue(cmd.none())
     # self.driver.b().whileTrue(cmd.none())
@@ -124,8 +124,8 @@ class RobotCore:
   def _initTelemetry(self) -> None:
     SmartDashboard.putString("Game/Robot/Type", constants.Game.Robot.TYPE.name)
     SmartDashboard.putString("Game/Robot/Name", constants.Game.Robot.NAME)
-    SmartDashboard.putNumber("Game/Field/Length", constants.Game.Field.LENGTH)
-    SmartDashboard.putNumber("Game/Field/Width", constants.Game.Field.WIDTH)
+    SmartDashboard.putNumber("Game/Field/Length", constants.Game.Field.BOUNDS.xwidth)
+    SmartDashboard.putNumber("Game/Field/Width", constants.Game.Field.BOUNDS.ywidth)
     SmartDashboard.putNumber("Robot/Drive/Length", constants.Subsystems.Drive.BUMPER_LENGTH)
     SmartDashboard.putNumber("Robot/Drive/Width", constants.Subsystems.Drive.BUMPER_WIDTH)
     SmartDashboard.putString("Robot/Cameras/Driver", constants.Cameras.DRIVER_STREAM)

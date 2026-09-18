@@ -75,4 +75,4 @@ class Match():
     SmartDashboard.putString("Match/SelectedAlliance", self._selectedAlliance.name if self._selectedAlliance is not None else "None")
     SmartDashboard.putString("Match/State", self.getMatchState().name)
     SmartDashboard.putNumber("Match/StateTime", math.floor(self.getMatchStateTime()))
-    SmartDashboard.putString("Match/Hub", self.getHubState().name)
+    SmartDashboard.putString("Match/HubState", self.getHubState().name)

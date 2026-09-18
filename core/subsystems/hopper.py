@@ -3,6 +3,7 @@ from commands2 import Subsystem, Command, cmd
 from wpilib import SmartDashboard, Timer
 from wpimath import units
 from lib import logger, utils
+from lib.classes import MotorIdleMode
 from core.classes import FuelLevel
 import core.constants as constants
 from lib.components.velocity_control_module import VelocityControlModule
@@ -21,6 +22,9 @@ class Hopper(Subsystem):
     self._elevator = VelocityControlModule(self._constants.ELEVATOR_CONFIG)
     self._indexer = VelocityControlModule(self._constants.INDEXER_CONFIG)
 
+    self._elevator.setIdleMode(MotorIdleMode.Coast)
+    self._indexer.setIdleMode(MotorIdleMode.Coast)
+
     self._isReversing: bool = False
     self._isRunning: bool = False
 
@@ -31,13 +35,13 @@ class Hopper(Subsystem):
     self._updateTelemetry()
 
   def _updateState(self) -> None:
-    if self._isReversing:
-      self._elevator.setSpeed(-self._constants.ELEVATOR_REVERSE_SPEED)
-      self._indexer.setSpeed(-self._constants.INDEXER_REVERSE_SPEED)
-    elif self._isRunning:
+    if self._isRunning:
       self._elevator.setSpeed(self._constants.ELEVATOR_SPEED)
       if self._indexerRunDelayTimer.hasElapsed(self._constants.INDEXER_RUN_DELAY):
         self._indexer.setSpeed(self._constants.INDEXER_SPEED)
+    elif self._isReversing:
+      self._elevator.setSpeed(-self._constants.ELEVATOR_REVERSE_SPEED)
+      self._indexer.setSpeed(-self._constants.INDEXER_REVERSE_SPEED)
     else:
       self.reset()
 

@@ -2,28 +2,33 @@ from typing import TYPE_CHECKING, Callable, Optional
 import math
 from wpilib import SmartDashboard
 from wpimath import units
-from wpimath.geometry import Pose2d, Rotation2d, Twist2d, Pose3d
+from wpimath.geometry import Pose2d, Rotation2d, Twist2d, Pose3d, Rectangle2d
 from wpimath.kinematics import ChassisSpeeds
 from lib import logger, utils
-from lib.classes import Alliance, Zone
-from core.classes import Target, TargetInfo
+from lib.classes import Alliance
+from core.classes import Target, TargetInfo, Zone
 import core.constants as constants
 
 class Targeting():
   def __init__(
       self,
       getRobotPose: Callable[[], Pose2d],
+      getRobotZone: Callable[[], Optional[Zone]],
       getChassisSpeeds: Callable[[], ChassisSpeeds],
       getTurretHeading: Callable[[], units.degrees]
     ) -> None:
     self._constants = constants.Services.Targeting
     self._getRobotPose = getRobotPose
+    self._getRobotZone = getRobotZone
     self._getChassisSpeeds = getChassisSpeeds
     self._getTurretHeading = getTurretHeading
 
     self._alliance: Optional[Alliance] = None
     self._targets: dict[Target, Pose3d] = {}
-    self._targetZones: dict[Target, Zone] = {}
+
+    self._activeTarget: Optional[Target] = None
+    self._activeTargetInfo = TargetInfo()
+    self._isActiveTargetEngaged: bool = False
 
     self._launchDistances = tuple(t.distance for t in self._constants.LAUNCH_METRICS)
     self._launchSpeeds = tuple(t.speed for t in self._constants.LAUNCH_METRICS)
@@ -32,10 +37,6 @@ class Targeting():
     self._launchDistanceMax = self._launchDistances[-1]
     self._launchHeadingMin = constants.Subsystems.Turret.ROTATION_RANGE.min
     self._launchHeadingMax = constants.Subsystems.Turret.ROTATION_RANGE.max
-
-    self._activeTarget: Optional[Target] = None
-    self._activeTargetInfo = TargetInfo()
-    self._isActiveTargetEngaged: bool = False
 
     self._prvx: units.meters_per_second = 0
     self._prvy: units.meters_per_second = 0
@@ -52,15 +53,18 @@ class Targeting():
   def _updateTargets(self) -> None:
     if utils.getAlliance() != self._alliance:
       self._alliance = utils.getAlliance()
-      self._targets = constants.Game.Field.Targets.TARGETS[self._alliance]
-      self._targetZones = constants.Game.Field.Targets.TARGET_ZONES[self._alliance]
+      self._targets = constants.Game.Field.TARGETS[self._alliance]
 
   def _updateActiveTarget(self) -> None:
-    for target in self._targetZones:
-      if utils.isPoseWithinZone(self._getRobotPose(), self._targetZones[target]):
-        self._activeTarget = target
-        return
-    self._activeTarget = None
+    match self._getRobotZone():
+      case Zone.AllianceZoneLeft | Zone.AllianceZoneRight:
+        self._activeTarget = Target.Hub
+      case Zone.NeutralZoneLeft:
+        self._activeTarget = Target.ShuttleLeft
+      case Zone.NeutralZoneRight:
+        self._activeTarget = Target.ShuttleRight
+      case _:
+        self._activeTarget = None
 
   def _updateActiveTargetInfo(self) -> None:
     if self._activeTarget is not None:

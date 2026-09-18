@@ -5,7 +5,7 @@ from wpimath import units
 from wpimath.geometry import Pose3d, Rotation3d
 from lib import logger, utils
 from lib.classes import ControllerRumbleMode, ControllerRumblePattern
-from core.classes import Target
+from core.classes import AutoPath, Target, Zone
 import core.constants as constants
 if TYPE_CHECKING: from core.robot import RobotCore
 
@@ -31,35 +31,19 @@ class Game:
       .withName(f'Game:AlignRobotToTargetHeading:{ target.name }')
     )
 
-  def alignAndMoveRobotOverBump(self) -> Command:
+  def driveRobotOverBump(self) -> Command:
     return (
-      self.alignRobotToNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
-      .andThen(self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpTraversalPose()))
-      .andThen(self._robot.drive.alignToTargetPose(self._robot.localization.getRobotPose, lambda: self._getBumpCompletionPose()))
+      self.alignRobotToNearestTargetPose([Target.BumpAllianceZoneRight, Target.BumpAllianceZoneLeft, Target.BumpNeutralZoneRight, Target.BumpNeutralZoneLeft])
+      .andThen(
+        cmd.select({
+          Zone.AllianceZoneRight: self._robot.auto.followPath(AutoPath.AZ_NZ_RIGHT).deadlineFor(self.alignTurretToHeading(0)),
+          Zone.AllianceZoneLeft: self._robot.auto.followPath(AutoPath.AZ_NZ_LEFT).deadlineFor(self.alignTurretToHeading(0)),
+          Zone.NeutralZoneRight: self._robot.auto.followPath(AutoPath.NZ_AZ_RIGHT).deadlineFor(self.alignTurretToHeading(225.0)),
+          Zone.NeutralZoneLeft: self._robot.auto.followPath(AutoPath.NZ_AZ_LEFT).deadlineFor(self.alignTurretToHeading(135.0)),
+        }, lambda: self._robot.localization.getRobotZone())
+      )
       .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
       .withName("Game:DriveRobotOverBump")
-    )
-
-  def _getBumpTraversalPose(self) -> Pose3d:
-    targetPose = self._robot.targeting.getNearestTargetPose([Target.BumpLeftAZ, Target.BumpLeftNZ, Target.BumpRightAZ, Target.BumpRightNZ])
-    return Pose3d(
-      x = targetPose.X() + (
-        constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE 
-        if utils.isValueWithinRange(targetPose.X(), 0, 4.4) or utils.isValueWithinRange(targetPose.X(), 8.6, 11.6) else 
-        -constants.Game.Commands.BUMP_TRAVERSAL_DISTANCE
-      ),
-      y = targetPose.Y(),
-      z = targetPose.Z(),
-      rotation = targetPose.rotation()
-    )
-  
-  def _getBumpCompletionPose(self) -> Pose3d:
-    targetPose = self._robot.localization.getRobotPose()
-    return Pose3d(
-      x = targetPose.X(),
-      y = targetPose.Y(),
-      z = 0,
-      rotation = Rotation3d(0, 0, units.degreesToRadians(utils.wrapAngle(targetPose.rotation().degrees() + 90.0)))
     )
   
   def alignTurretToActiveTarget(self) -> Command:
@@ -88,7 +72,7 @@ class Game:
 
   def reverseHopper(self) -> Command:
     return (
-      self._robot.hopper.reverse().withTimeout(constants.Subsystems.Hopper.REVERSE_TIMEOUT)
+      self._robot.hopper.reverse()
       .withName("Game:ReverseHopper")
     )
   
@@ -101,8 +85,8 @@ class Game:
   def agitateRobot(self) -> Command:
     return (
       (
-        (self._robot.drive.drive(lambda: 0.2, lambda: 0.2, lambda: 0).withTimeout(0.1))
-        .andThen(self._robot.drive.drive(lambda: -0.2, lambda: -0.2, lambda: 0).withTimeout(0.1))
+        (self._robot.drive.drive(lambda: 0.3, lambda: 0.3, lambda: 0).withTimeout(0.2))
+        .andThen(self._robot.drive.drive(lambda: -0.3, lambda: -0.3, lambda: 0).withTimeout(0.2))
         .andThen(self._robot.drive.drive(lambda: 0, lambda: 0, lambda: 0).withTimeout(0.02))
       )
       .finallyDo(lambda end: self._robot.drive.reset())
@@ -118,9 +102,10 @@ class Game:
       .deadlineFor(
         self.alignTurretToActiveTarget(),
         self._robot.launcher.run_(lambda: self._robot.targeting.getActiveTargetInfo().speed),
-        cmd.waitUntil(lambda: self._robot.launcher.isAtTargetSpeed()).withTimeout(constants.Game.Commands.LAUNCHER_READY_TIMEOUT).andThen(
-          self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange())
-          .deadlineFor(cmd.waitSeconds(constants.Game.Commands.INTAKE_AGITATE_DELAY).andThen(self._robot.intake.agitate()))
+        self.reverseHopper().withTimeout(0.75).andThen(
+          self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange()).deadlineFor(
+            cmd.waitSeconds(constants.Game.Commands.INTAKE_AGITATE_DELAY).andThen(self._robot.intake.agitate())
+          )
         )
       )
       .onlyIf(lambda: self._robot.targeting.getActiveTarget() is not None)
@@ -133,9 +118,7 @@ class Game:
       self.alignTurretToHeading(0)
       .deadlineFor(
         self._robot.launcher.run_(lambda: 0.35),
-        cmd.waitUntil(lambda: self._robot.launcher.isAtTargetSpeed()).withTimeout(constants.Game.Commands.LAUNCHER_READY_TIMEOUT).andThen(
-          self._robot.hopper.run_(lambda: True)
-        )
+        self._robot.hopper.run_(lambda: True)
       )
       .withName("Game:LaunchFuelDemo")
     )

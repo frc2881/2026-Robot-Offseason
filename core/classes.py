@@ -2,14 +2,30 @@ from enum import Enum, IntEnum, auto
 from dataclasses import dataclass
 from wpimath import units
 
+class AutoPath(Enum):
+  BUMP_RIGHT_LOOP = auto()
+  BUMP_LEFT_LOOP = auto()
+  HUB_DEPOT = auto()
+  CUSTOM = auto()
+  AZ_NZ_RIGHT = auto()
+  AZ_NZ_LEFT = auto()
+  NZ_AZ_RIGHT = auto()
+  NZ_AZ_LEFT = auto()
+
 class Target(Enum):
   Hub = auto()
-  ShuttleLeft = auto()
   ShuttleRight = auto()
-  BumpLeftAZ = auto()
-  BumpLeftNZ = auto()
-  BumpRightAZ = auto()
-  BumpRightNZ = auto()
+  ShuttleLeft = auto()
+  BumpAllianceZoneRight = auto()
+  BumpAllianceZoneLeft = auto()
+  BumpNeutralZoneRight = auto()
+  BumpNeutralZoneLeft = auto()
+
+class Zone(Enum):
+  AllianceZoneRight = auto()
+  AllianceZoneLeft = auto()
+  NeutralZoneRight = auto()
+  NeutralZoneLeft = auto()
 
 @dataclass(frozen=False, slots=True)
 class TargetInfo:

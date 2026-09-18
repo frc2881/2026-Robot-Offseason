@@ -1,6 +1,6 @@
 import wpilib
 from wpimath import units
-from wpimath.geometry import Pose2d, Pose3d, Transform3d, Translation3d, Rotation3d, Translation2d, Rotation2d
+from wpimath.geometry import Pose3d, Transform3d, Translation3d, Rotation3d, Translation2d, Rotation2d, Rectangle2d
 from wpimath.kinematics import SwerveDrive4Kinematics
 from robotpy_apriltag import AprilTagFieldLayout
 import navx
@@ -13,7 +13,6 @@ from lib.classes import (
   RobotType,
   Alliance, 
   PID,
-  Zone,
   Range,
   MotorModel,
   FeedForwardGains,
@@ -34,8 +33,8 @@ from lib.classes import (
   BinarySensorConfig,
   DistanceSensorConfig
 )
-from core.classes import Target, LaunchMetric, FuelLevel
 import lib.constants
+from core.classes import Target, Zone, LaunchMetric, FuelLevel
 
 _aprilTagFieldLayout = AprilTagFieldLayout(f'{ wpilib.getDeployDirectory() }/localization/2026-rebuilt-andymark.json')
 
@@ -72,20 +71,20 @@ class Subsystems:
     DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.translation for c in SWERVE_MODULE_CONFIGS))
 
     TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 1.0
-    ROTATION_MAX_VELOCITY: units.degrees_per_second = 540.0
+    ROTATION_MAX_VELOCITY: units.degrees_per_second = 720.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
-      translationPID = PID(4.0, 0, 0),
-      translationMaxVelocity = 2.4,
-      translationPositionTolerance = 0.1,
-      rotationPID = PID(4.0, 0, 0),
+      translationPID = PID(3.0, 0, 0),
+      translationMaxVelocity = 3.2,
+      translationPositionTolerance = 0.15,
+      rotationPID = PID(3.0, 0, 0),
       rotationMaxVelocity = 720.0,
-      rotationPositionTolerance = 3.0
+      rotationPositionTolerance = 5.0
     )
 
     TARGET_HEADING_ALIGNMENT_CONSTANTS = HeadingAlignmentConstants(
       rotationPID = PID(0.01, 0, 0), 
-      rotationPositionTolerance = 0.5
+      rotationPositionTolerance = 1.0
     )
 
     DRIFT_CORRECTION_CONSTANTS = HeadingAlignmentConstants(
@@ -105,7 +104,7 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-0.9, 1.0),
+      motorOutputRange = Range(-0.8, 0.8),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
@@ -136,7 +135,7 @@ class Subsystems:
 
     ARM_RETRACT_POSITION: float = 10.0
     ARM_INTAKE_POSITION: float = 48.0
-    ARM_AGITATE_RANGE = Range(24.0, 46.0)
+    ARM_AGITATE_RANGE = Range(30.0, 46.0)
     ARM_AGITATE_TIMEOUT: units.seconds = 1.0
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
     ROLLERS_AGITATE_SPEED: units.percent = 0.1
@@ -164,17 +163,16 @@ class Subsystems:
       motorMotionMaxAcceleration = 12000.0
     ))
     
-    INDEXER_SPEED: units.percent = 0.8
+    INDEXER_SPEED: units.percent = 0.75
     ELEVATOR_SPEED: units.percent = 1.0
-    INDEXER_REVERSE_SPEED: units.percent = 0.8
-    ELEVATOR_REVERSE_SPEED: units.percent = 0.8
-
+    INDEXER_REVERSE_SPEED: units.percent = 0.75
+    ELEVATOR_REVERSE_SPEED: units.percent = 0.75
     INDEXER_RUN_DELAY: units.seconds = 0.25
-    REVERSE_TIMEOUT: units.seconds = 2.0
+
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
-      FuelLevel.Full: 200,
-      FuelLevel.Mid: 325,
-      FuelLevel.Low: 450
+      FuelLevel.Full: 240,
+      FuelLevel.Mid: 360,
+      FuelLevel.Low: 460
     }
 
   class Turret:
@@ -336,45 +334,38 @@ class Game:
     NAME: str = "Rosetta Stone (Offseason)"
 
   class Commands:
-    LAUNCHER_READY_TIMEOUT: units.seconds = 0.75
-    BUMP_TRAVERSAL_DISTANCE: units.meters = 4.5
-    INTAKE_AGITATE_DELAY: units.seconds = 1.5
+    INTAKE_AGITATE_DELAY: units.seconds = 3.0
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()
     WIDTH = _aprilTagFieldLayout.getFieldWidth()
-    ZONE = Zone(start = Translation2d(0, 0), end = Translation2d(LENGTH, WIDTH))
+    BOUNDS = Rectangle2d(Translation2d(0, 0), Translation2d(LENGTH, WIDTH))
 
-    class Targets:
-      TARGETS: dict[Alliance, dict[Target, Pose3d]] = {
-        Alliance.Blue: {
-          Target.Hub: Pose3d(4.625, 4.030, 1.263, Rotation3d(Rotation2d.fromDegrees(0))), 
-          Target.ShuttleLeft: Pose3d(3.0, 5.25, 0, Rotation3d(Rotation2d.fromDegrees(180.0))),
-          Target.ShuttleRight: Pose3d(3.0, 3.0, 0, Rotation3d(Rotation2d.fromDegrees(180.0))), 
-          Target.BumpLeftAZ: Pose3d(2.800, 5.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
-          Target.BumpLeftNZ: Pose3d(6.400, 5.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
-          Target.BumpRightAZ: Pose3d(2.800, 2.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
-          Target.BumpRightNZ: Pose3d(6.400, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
-        },
-        Alliance.Red: {}
-      }
+    TARGETS: dict[Alliance, dict[Target, Pose3d]] = {
+      Alliance.Blue: {
+        Target.Hub: Pose3d(4.625, 4.030, 1.263, Rotation3d(Rotation2d.fromDegrees(180.0))), 
+        Target.ShuttleRight: Pose3d(4.200, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(180.0))), 
+        Target.ShuttleLeft: Pose3d(4.200, 5.600, 0, Rotation3d(Rotation2d.fromDegrees(180.0))),
+        Target.BumpAllianceZoneRight: Pose3d(3.300, 2.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+        Target.BumpAllianceZoneLeft: Pose3d(3.300, 5.700, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+        Target.BumpNeutralZoneRight: Pose3d(5.800, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
+        Target.BumpNeutralZoneLeft: Pose3d(5.800, 5.500, 0, Rotation3d(Rotation2d.fromDegrees(45.0)))
+      },
+      Alliance.Red: {}
+    }
+    for target in TARGETS[Alliance.Blue]:
+      pose = FlippingUtil.flipFieldPose(TARGETS[Alliance.Blue][target].toPose2d())
+      TARGETS[Alliance.Red][target] = Pose3d(pose.X(), pose.Y(), TARGETS[Alliance.Blue][target].Z(), Rotation3d(pose.rotation()))
 
-      for target in TARGETS[Alliance.Blue]:
-        pose = FlippingUtil.flipFieldPose(TARGETS[Alliance.Blue][target].toPose2d())
-        TARGETS[Alliance.Red][target] = Pose3d(pose.X(), pose.Y(), TARGETS[Alliance.Blue][target].Z(), Rotation3d(pose.rotation()))
-
-      TARGET_ZONES: dict[Alliance, dict[Target, Zone]] = {
-        Alliance.Blue: {
-          Target.Hub: Zone(start = Translation2d(0.0, 0.0), end = Translation2d(4.4, 8.0)),
-          Target.ShuttleLeft: Zone(start = Translation2d(5.6, 5.5), end = Translation2d(16.5, 8.0)),
-          Target.ShuttleRight: Zone(start = Translation2d(5.6, 0.0), end = Translation2d(16.5, 2.6))
-        },
-        Alliance.Red: {}
-      }
-
-      for target in TARGET_ZONES[Alliance.Blue]:
-        zone = TARGET_ZONES[Alliance.Blue][target]
-        TARGET_ZONES[Alliance.Red][target] = Zone(
-          FlippingUtil.flipFieldPose(Pose2d(zone.end.X(), zone.end.Y(), Rotation2d())).translation(), 
-          FlippingUtil.flipFieldPose(Pose2d(zone.start.X(), zone.start.Y(), Rotation2d())).translation()
-        )
+    ZONES: dict[Alliance, dict[Zone, Rectangle2d]] = {
+      Alliance.Blue: {
+        Zone.AllianceZoneRight: Rectangle2d(Translation2d(0, 0), Translation2d(4.400, 4.022)),
+        Zone.AllianceZoneLeft: Rectangle2d(Translation2d(0, 4.022), Translation2d(4.400, 8.043)),
+        Zone.NeutralZoneRight: Rectangle2d(Translation2d(5.600, 0), Translation2d(11.350, 4.022)),
+        Zone.NeutralZoneLeft: Rectangle2d(Translation2d(5.600, 4.022), Translation2d(11.350, 8.043))
+      },
+      Alliance.Red: {}
+    }
+    for zone in ZONES[Alliance.Blue]:
+      rectangle = ZONES[Alliance.Blue][zone]
+      ZONES[Alliance.Red][zone] = Rectangle2d(FlippingUtil.flipFieldPose(rectangle.center()), rectangle.xwidth, rectangle.ywidth)
