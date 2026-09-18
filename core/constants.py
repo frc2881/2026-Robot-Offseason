@@ -74,10 +74,10 @@ class Subsystems:
     ROTATION_MAX_VELOCITY: units.degrees_per_second = 720.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
-      translationPID = PID(3.0, 0, 0),
+      translationPID = PID(4.0, 0, 0),
       translationMaxVelocity = 3.2,
       translationPositionTolerance = 0.15,
-      rotationPID = PID(3.0, 0, 0),
+      rotationPID = PID(4.0, 0, 0),
       rotationMaxVelocity = 720.0,
       rotationPositionTolerance = 5.0
     )
@@ -104,7 +104,7 @@ class Subsystems:
       motorType = SparkLowLevel.MotorType.kBrushless,
       motorCurrentLimit = 60,
       motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-0.8, 0.8),
+      motorOutputRange = Range(-1.0, 0.8),
       motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
       motorMotionCruiseVelocity = 12000.0,
       motorMotionMaxAcceleration = 24000.0,
@@ -135,10 +135,10 @@ class Subsystems:
 
     ARM_RETRACT_POSITION: float = 10.0
     ARM_INTAKE_POSITION: float = 48.0
-    ARM_AGITATE_RANGE = Range(30.0, 46.0)
+    ARM_AGITATE_RANGE = Range(32.0, 48.0)
     ARM_AGITATE_TIMEOUT: units.seconds = 1.0
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
-    ROLLERS_AGITATE_SPEED: units.percent = 0.1
+    ROLLERS_AGITATE_SPEED: units.percent = 0.2
 
   class Hopper:
     INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
@@ -163,11 +163,10 @@ class Subsystems:
       motorMotionMaxAcceleration = 12000.0
     ))
     
-    INDEXER_SPEED: units.percent = 0.75
-    ELEVATOR_SPEED: units.percent = 1.0
-    INDEXER_REVERSE_SPEED: units.percent = 0.75
-    ELEVATOR_REVERSE_SPEED: units.percent = 0.75
-    INDEXER_RUN_DELAY: units.seconds = 0.25
+    INDEXER_RUN_SPEED: units.percent = 0.75
+    ELEVATOR_RUN_SPEED: units.percent = 1.0
+    AGITATE_SPEED: units.percent = 0.75
+    INDEXER_RUN_DELAY: units.seconds = 0.5
 
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
       FuelLevel.Full: 240,

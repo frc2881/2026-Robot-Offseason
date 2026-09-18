@@ -70,23 +70,23 @@ class Game:
       .withName("Game:RetractIntake")
     )
 
-  def reverseHopper(self) -> Command:
+  def ejectIntake(self) -> Command:
     return (
-      self._robot.hopper.reverse()
-      .withName("Game:ReverseHopper")
+      self._robot.intake.eject()
+      .withName("Game:EjectIntake")
     )
-  
-  def reverseIntake(self) -> Command:
+
+  def agitateHopper(self) -> Command:
     return (
-      self._robot.intake.reverse()
-      .withName("Game:ReverseIntake")
+      self._robot.hopper.agitate()
+      .withName("Game:AgitateHopper")
     )
   
   def agitateRobot(self) -> Command:
     return (
       (
-        (self._robot.drive.drive(lambda: 0.3, lambda: 0.3, lambda: 0).withTimeout(0.2))
-        .andThen(self._robot.drive.drive(lambda: -0.3, lambda: -0.3, lambda: 0).withTimeout(0.2))
+        (self._robot.drive.drive(lambda: -0.3, lambda: -0.3, lambda: 0).withTimeout(0.2))
+        .andThen(self._robot.drive.drive(lambda: 0.2, lambda: 0.2, lambda: 0).withTimeout(0.2))
         .andThen(self._robot.drive.drive(lambda: 0, lambda: 0, lambda: 0).withTimeout(0.02))
       )
       .finallyDo(lambda end: self._robot.drive.reset())
@@ -102,9 +102,11 @@ class Game:
       .deadlineFor(
         self.alignTurretToActiveTarget(),
         self._robot.launcher.run_(lambda: self._robot.targeting.getActiveTargetInfo().speed),
-        self.reverseHopper().withTimeout(0.75).andThen(
+        self.agitateHopper().withTimeout(0.75).andThen(
           self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange()).deadlineFor(
-            cmd.waitSeconds(constants.Game.Commands.INTAKE_AGITATE_DELAY).andThen(self._robot.intake.agitate())
+            cmd.waitSeconds(constants.Game.Commands.INTAKE_AGITATE_DELAY).andThen(
+              self._robot.intake.agitate()
+            )
           )
         )
       )
