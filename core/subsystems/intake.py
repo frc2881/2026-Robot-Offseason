@@ -1,8 +1,8 @@
 from typing import Callable
 from enum import Enum, auto
 from commands2 import Subsystem, Command, cmd
-from wpilib import SmartDashboard, Timer
-from lib import logger, utils
+from wpilib import Timer
+from lib import logger, telemetry, utils
 from lib.classes import MotorIdleMode
 from lib.components.relative_position_control_module import RelativePositionControlModule
 from lib.components.velocity_control_module import VelocityControlModule
@@ -115,6 +115,6 @@ class Intake(Subsystem):
     self._rollers.reset()
 
   def _updateTelemetry(self) -> None:
-    SmartDashboard.putString("Robot/Intake/State", self._state.name)
-    SmartDashboard.putBoolean("Robot/Intake/IsExtended", self.isExtended())
-    SmartDashboard.putBoolean("Robot/Intake/IsRunning", self.isRunning())
+    telemetry.log("Robot/Intake/State", self._state.name)
+    telemetry.log("Robot/Intake/IsExtended", self.isExtended())
+    telemetry.log("Robot/Intake/IsRunning", self.isRunning())

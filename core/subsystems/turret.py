@@ -1,8 +1,7 @@
 from typing import Callable
 from commands2 import Subsystem, Command
-from wpilib import SmartDashboard
 from wpimath import units
-from lib import logger, utils
+from lib import logger, telemetry, utils
 from lib.components.relative_position_control_module import RelativePositionControlModule
 import core.constants as constants
 
@@ -44,6 +43,6 @@ class Turret(Subsystem):
     self._turret.reset()
 
   def _updateTelemetry(self) -> None:
-    SmartDashboard.putNumber("Robot/Turret/Heading", self.getHeading())
-    SmartDashboard.putNumber("Robot/Turret/TargetHeading", self.getTargetHeading())
-    SmartDashboard.putBoolean("Robot/Turret/IsAtTargetHeading", self.isAtTargetHeading())
+    telemetry.log("Robot/Turret/Heading", self.getHeading())
+    telemetry.log("Robot/Turret/TargetHeading", self.getTargetHeading())
+    telemetry.log("Robot/Turret/IsAtTargetHeading", self.isAtTargetHeading())

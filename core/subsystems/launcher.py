@@ -1,8 +1,7 @@
 from typing import Callable
 from commands2 import Subsystem, Command
-from wpilib import SmartDashboard
 from wpimath import units
-from lib import logger, utils
+from lib import logger, telemetry, utils
 from lib.classes import MotorIdleMode
 from lib.components.velocity_control_module import VelocityControlModule
 from lib.components.follower_module import FollowerModule
@@ -42,6 +41,6 @@ class Launcher(Subsystem):
     self._launcherAccelerator.reset()
 
   def _updateTelemetry(self) -> None:
-    SmartDashboard.putNumber("Robot/Launcher/Speed", self._launcherLeader.getSpeed())
-    SmartDashboard.putNumber("Robot/Launcher/TargetSpeed", self._launcherLeader.getTargetSpeed())
-    SmartDashboard.putBoolean("Robot/Launcher/IsAtTargetSpeed", self.isAtTargetSpeed())
+    telemetry.log("Robot/Launcher/Speed", self._launcherLeader.getSpeed())
+    telemetry.log("Robot/Launcher/TargetSpeed", self._launcherLeader.getTargetSpeed())
+    telemetry.log("Robot/Launcher/IsAtTargetSpeed", self.isAtTargetSpeed())

@@ -1,9 +1,9 @@
 from typing import Callable
 from enum import Enum, auto
 from commands2 import Subsystem, Command, cmd
-from wpilib import SmartDashboard, Timer
+from wpilib import Timer
 from wpimath import units
-from lib import logger, utils
+from lib import logger, telemetry, utils
 from lib.classes import MotorIdleMode
 from core.classes import FuelLevel
 import core.constants as constants
@@ -85,6 +85,6 @@ class Hopper(Subsystem):
     return FuelLevel.Empty
   
   def _updateTelemetry(self) -> None:
-    SmartDashboard.putString("Robot/Hopper/State", self._state.name)
-    SmartDashboard.putString("Robot/Hopper/FuelLevel", self.getFuelLevel().name)
-    SmartDashboard.putBoolean("Robot/Hopper/IsRunning", self.isRunning())
+    telemetry.log("Robot/Hopper/State", self._state.name)
+    telemetry.log("Robot/Hopper/FuelLevel", self.getFuelLevel().name)
+    telemetry.log("Robot/Hopper/IsRunning", self.isRunning())

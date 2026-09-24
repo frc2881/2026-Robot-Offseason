@@ -3,7 +3,7 @@ from commands2 import Command, cmd
 from wpilib import RobotBase
 from wpimath import units
 from wpimath.geometry import Pose3d, Rotation3d
-from lib import logger, utils
+from lib import logger, telemetry, utils
 from lib.classes import ControllerRumbleMode, ControllerRumblePattern
 from core.classes import AutoPath, Target, Zone
 import core.constants as constants

@@ -1,10 +1,9 @@
 from typing import TYPE_CHECKING, Callable, Optional
 import math
-from wpilib import SmartDashboard
 from wpimath import units
 from wpimath.geometry import Pose2d, Rotation2d, Twist2d, Pose3d, Rectangle2d
 from wpimath.kinematics import ChassisSpeeds
-from lib import logger, utils
+from lib import logger, telemetry, utils
 from lib.classes import Alliance
 from core.classes import Target, TargetInfo, Zone
 import core.constants as constants
@@ -154,11 +153,11 @@ class Targeting():
     )
 
   def _updateTelemetry(self) -> None:
-    SmartDashboard.putString("Robot/Targeting/ActiveTarget", self._activeTarget.name if self._activeTarget is not None else "")
-    SmartDashboard.putBoolean("Robot/Targeting/IsActiveTargetEngaged", self._isActiveTargetEngaged)
-    SmartDashboard.putBoolean("Robot/Targeting/IsActiveTargetInRange", self.isActiveTargetInRange())
-    SmartDashboard.putNumber("Robot/Targeting/ActiveTargetInfo/Distance", self._activeTargetInfo.distance)
-    SmartDashboard.putNumber("Robot/Targeting/ActiveTargetInfo/Speed", self._activeTargetInfo.speed)
-    SmartDashboard.putNumber("Robot/Targeting/ActiveTargetInfo/Heading", self._activeTargetInfo.heading)
-    SmartDashboard.putBoolean("Robot/Targeting/ActiveTargetInfo/IsDistanceValid", self._activeTargetInfo.isDistanceValid)
-    SmartDashboard.putBoolean("Robot/Targeting/ActiveTargetInfo/IsHeadingValid", self._activeTargetInfo.isHeadingValid)
+    telemetry.log("Robot/Targeting/ActiveTarget", self._activeTarget.name if self._activeTarget is not None else "")
+    telemetry.log("Robot/Targeting/IsActiveTargetEngaged", self._isActiveTargetEngaged)
+    telemetry.log("Robot/Targeting/IsActiveTargetInRange", self.isActiveTargetInRange())
+    telemetry.log("Robot/Targeting/ActiveTargetInfo/Distance", self._activeTargetInfo.distance)
+    telemetry.log("Robot/Targeting/ActiveTargetInfo/Speed", self._activeTargetInfo.speed)
+    telemetry.log("Robot/Targeting/ActiveTargetInfo/Heading", self._activeTargetInfo.heading)
+    telemetry.log("Robot/Targeting/ActiveTargetInfo/IsDistanceValid", self._activeTargetInfo.isDistanceValid)
+    telemetry.log("Robot/Targeting/ActiveTargetInfo/IsHeadingValid", self._activeTargetInfo.isHeadingValid)

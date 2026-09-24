@@ -1,9 +1,9 @@
 from typing import Optional
 import math
 from wpimath import units
-from wpilib import DriverStation, SmartDashboard
+from wpilib import DriverStation
 from lib.classes import Alliance, RobotState, RobotMode
-from lib import logger, utils
+from lib import logger, telemetry, utils
 from core.classes import MatchState, HubState
 
 class Match():
@@ -72,7 +72,7 @@ class Match():
     return self._hubState
 
   def _updateTelemetry(self) -> None:
-    SmartDashboard.putString("Match/SelectedAlliance", self._selectedAlliance.name if self._selectedAlliance is not None else "None")
-    SmartDashboard.putString("Match/State", self.getMatchState().name)
-    SmartDashboard.putNumber("Match/StateTime", math.floor(self.getMatchStateTime()))
-    SmartDashboard.putString("Match/HubState", self.getHubState().name)
+    telemetry.log("Match/SelectedAlliance", self._selectedAlliance.name if self._selectedAlliance is not None else "None")
+    telemetry.log("Match/State", self.getMatchState().name)
+    telemetry.log("Match/StateTime", math.floor(self.getMatchStateTime()))
+    telemetry.log("Match/HubState", self.getHubState().name)
