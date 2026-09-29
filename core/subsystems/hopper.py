@@ -25,6 +25,8 @@ class Hopper(Subsystem):
     self._getHopperSensorDistance = getHopperSensorDistance
     self._getIndexerSensorHasTarget = getIndexerSensorHasTarget
 
+    self._telemetryName = "Robot/Subsystems/Hopper"
+
     self._elevator = VelocityControlModule(self._constants.ELEVATOR_CONFIG)
     self._indexer = VelocityControlModule(self._constants.INDEXER_CONFIG)
 
@@ -85,6 +87,6 @@ class Hopper(Subsystem):
     return FuelLevel.Empty
   
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Subsystems/Hopper/State", self._state.name)
-    telemetry.log("Robot/Subsystems/Hopper/FuelLevel", self.getFuelLevel().name)
-    telemetry.log("Robot/Subsystems/Hopper/IsRunning", self.isRunning())
+    telemetry.log(f'{self._telemetryName}/State', self._state.name)
+    telemetry.log(f'{self._telemetryName}/FuelLevel', self.getFuelLevel().name)
+    telemetry.log(f'{self._telemetryName}/IsRunning', self.isRunning())

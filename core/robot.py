@@ -1,9 +1,9 @@
 from wpilib import DriverStation
 from commands2 import cmd
 from lib import logger, telemetry, utils
+from lib.classes import RobotState
 from lib.controllers.xbox import XboxController
 from lib.controllers.button import ButtonController
-from lib.classes import RobotState
 from lib.sensors.gyro_navx2 import Gyro
 from lib.sensors.pose import PoseSensor
 from lib.sensors.distance import DistanceSensor
@@ -124,12 +124,9 @@ class RobotCore:
   def _initTelemetry(self) -> None:
     telemetry.log("Game/Robot/Type", constants.Game.Robot.TYPE.name)
     telemetry.log("Game/Robot/Name", constants.Game.Robot.NAME)
-    telemetry.log("Game/Field/Length", constants.Game.Field.BOUNDS.xwidth)
-    telemetry.log("Game/Field/Width", constants.Game.Field.BOUNDS.ywidth)
-    telemetry.log("Robot/Subsystems/Drive/Length", constants.Subsystems.Drive.BUMPER_LENGTH)
-    telemetry.log("Robot/Subsystems/Drive/Width", constants.Subsystems.Drive.BUMPER_WIDTH)
-    telemetry.log("Robot/Sensors/Camera/Driver", constants.Cameras.DRIVER_STREAM)
-    telemetry.log("Robot/Sensors/Pose/Names", list(c.cameraName for c in constants.Sensors.Pose.POSE_SENSOR_CONFIGS), element_type = str)
+    telemetry.log("Game/Field/Length", constants.Game.Field.LENGTH)
+    telemetry.log("Game/Field/Width", constants.Game.Field.WIDTH)
+    telemetry.log("Robot/Cameras/Driver", constants.Cameras.DRIVER_STREAM)
 
   def _periodic(self) -> None:
     self._updateTelemetry()

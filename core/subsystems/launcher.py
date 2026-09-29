@@ -12,6 +12,8 @@ class Launcher(Subsystem):
     super().__init__()
     self._constants = constants.Subsystems.Launcher
 
+    self._telemetryName = "Robot/Subsystems/Launcher"
+
     self._launcherLeader = VelocityControlModule(self._constants.LAUNCHER_LEADER_CONFIG)
     self._launcherFollower = FollowerControlModule(self._constants.LAUNCHER_FOLLOWER_CONFIG)
     self._launcherAccelerator = VelocityControlModule(self._constants.LAUNCHER_ACCELERATOR_CONFIG)
@@ -41,6 +43,6 @@ class Launcher(Subsystem):
     self._launcherAccelerator.reset()
 
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Subsystems/Launcher/Speed", self._launcherLeader.getSpeed())
-    telemetry.log("Robot/Subsystems/Launcher/TargetSpeed", self._launcherLeader.getTargetSpeed())
-    telemetry.log("Robot/Subsystems/Launcher/IsAtTargetSpeed", self.isAtTargetSpeed())
+    telemetry.log(f'{self._telemetryName}/Speed', self._launcherLeader.getSpeed())
+    telemetry.log(f'{self._telemetryName}/TargetSpeed', self._launcherLeader.getTargetSpeed())
+    telemetry.log(f'{self._telemetryName}/IsAtTargetSpeed', self.isAtTargetSpeed())

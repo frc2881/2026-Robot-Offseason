@@ -18,10 +18,11 @@ class Drive(Subsystem):
       getGyroHeading: Callable[[], units.degrees]
     ) -> None:
     super().__init__()
-    self._getGyroHeading = getGyroHeading
-    
     self._constants = constants.Subsystems.Drive
+    self._getGyroHeading = getGyroHeading
 
+    self._telemetryName = "Robot/Subsystems/Drive"
+    
     self._modules = (
       SwerveDriveModule(self._constants.SWERVE_DRIVE_MODULE_CONFIGS[SwerveDriveModuleLocation.FrontLeft]),
       SwerveDriveModule(self._constants.SWERVE_DRIVE_MODULE_CONFIGS[SwerveDriveModuleLocation.FrontRight]),
@@ -61,6 +62,9 @@ class Drive(Subsystem):
     self._translationXInputLimiter = SlewRateLimiter(self._constants.INPUT_RATE_LIMIT_DEMO)
     self._translationYInputLimiter = SlewRateLimiter(self._constants.INPUT_RATE_LIMIT_DEMO)
     self._rotationInputLimiter = SlewRateLimiter(self._constants.INPUT_RATE_LIMIT_DEMO)
+
+    telemetry.log(f'{self._telemetryName}/Bumper/Length', self._constants.BUMPER_LENGTH)
+    telemetry.log(f'{self._telemetryName}/Bumper/Width', self._constants.BUMPER_WIDTH)
 
   def periodic(self) -> None:
     self._updateTelemetry()
@@ -148,7 +152,7 @@ class Drive(Subsystem):
 
   def _setIdleMode(self, idleMode: IdleMode) -> None:
     for module in self._modules: module.setIdleMode(idleMode)
-    telemetry.log("Robot/Drive/IdleMode/selected", idleMode.name)
+    telemetry.log(f'{self._telemetryName}/IdleMode', idleMode.name)
 
   def holdCoastMode(self) -> Command:
     return self.startEnd(
@@ -234,9 +238,9 @@ class Drive(Subsystem):
     self._targetPose = None
 
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Subsystems/Drive/Modules/States", list(self._getModuleStates()), element_type = SwerveModuleState)
-    telemetry.log("Robot/Subsystems/Drive/TargetPoseAlignmentState", self._targetPoseAlignmentState.name)
-    telemetry.log("Robot/Subsystems/Drive/IsAlignedToTargetPose", self.isAlignedToTargetPose())
-    telemetry.log("Robot/Subsystems/Drive/TargetHeadingAlignmentState", self._targetHeadingAlignmentState.name)
-    telemetry.log("Robot/Subsystems/Drive/IsAlignedToTargetHeading", self.isAlignedToTargetHeading())
-    telemetry.log("Robot/Subsystems/Drive/Modules/LockPosition", self._modulesLockPosition.name)
+    telemetry.log(f'{self._telemetryName}/Modules/States', list(self._getModuleStates()), element_type = SwerveModuleState)
+    telemetry.log(f'{self._telemetryName}/TargetPoseAlignmentState', self._targetPoseAlignmentState.name)
+    telemetry.log(f'{self._telemetryName}/IsAlignedToTargetPose', self.isAlignedToTargetPose())
+    telemetry.log(f'{self._telemetryName}/TargetHeadingAlignmentState', self._targetHeadingAlignmentState.name)
+    telemetry.log(f'{self._telemetryName}/IsAlignedToTargetHeading', self.isAlignedToTargetHeading())
+    telemetry.log(f'{self._telemetryName}/Modules/LockPosition', self._modulesLockPosition.name)

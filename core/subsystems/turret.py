@@ -10,6 +10,8 @@ class Turret(Subsystem):
     super().__init__()
     self._constants = constants.Subsystems.Turret
 
+    self._telemetryName = "Robot/Subsystems/Turret"
+
     self._turret = RelativePositionControlModule(self._constants.TURRET_CONFIG)
 
   def periodic(self) -> None:
@@ -43,6 +45,6 @@ class Turret(Subsystem):
     self._turret.reset()
 
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Subsystems/Turret/Heading", self.getHeading())
-    telemetry.log("Robot/Subsystems/Turret/TargetHeading", self.getTargetHeading())
-    telemetry.log("Robot/Subsystems/Turret/IsAtTargetHeading", self.isAtTargetHeading())
+    telemetry.log(f'{self._telemetryName}/Heading', self.getHeading())
+    telemetry.log(f'{self._telemetryName}/TargetHeading', self.getTargetHeading())
+    telemetry.log(f'{self._telemetryName}/IsAtTargetHeading', self.isAtTargetHeading())

@@ -22,6 +22,8 @@ class Targeting():
     self._getChassisSpeeds = getChassisSpeeds
     self._getTurretHeading = getTurretHeading
 
+    self._telemetryName = "Robot/Services/Targeting"
+
     self._alliance: Optional[Alliance] = None
     self._targets: dict[Target, Pose3d] = {}
 
@@ -153,11 +155,11 @@ class Targeting():
     )
 
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Services/Targeting/ActiveTarget", self._activeTarget.name if self._activeTarget is not None else "")
-    telemetry.log("Robot/Services/Targeting/IsActiveTargetEngaged", self._isActiveTargetEngaged)
-    telemetry.log("Robot/Services/Targeting/IsActiveTargetInRange", self.isActiveTargetInRange())
-    telemetry.log("Robot/Services/Targeting/ActiveTargetInfo/Distance", self._activeTargetInfo.distance)
-    telemetry.log("Robot/Services/Targeting/ActiveTargetInfo/Speed", self._activeTargetInfo.speed)
-    telemetry.log("Robot/Services/Targeting/ActiveTargetInfo/Heading", self._activeTargetInfo.heading)
-    telemetry.log("Robot/Services/Targeting/ActiveTargetInfo/IsDistanceValid", self._activeTargetInfo.isDistanceValid)
-    telemetry.log("Robot/Services/Targeting/ActiveTargetInfo/IsHeadingValid", self._activeTargetInfo.isHeadingValid)
+    telemetry.log(f'{self._telemetryName}/ActiveTarget', self._activeTarget.name if self._activeTarget is not None else "")
+    telemetry.log(f'{self._telemetryName}/IsActiveTargetEngaged', self._isActiveTargetEngaged)
+    telemetry.log(f'{self._telemetryName}/IsActiveTargetInRange', self.isActiveTargetInRange())
+    telemetry.log(f'{self._telemetryName}/ActiveTargetInfo/Distance', self._activeTargetInfo.distance)
+    telemetry.log(f'{self._telemetryName}/ActiveTargetInfo/Speed', self._activeTargetInfo.speed)
+    telemetry.log(f'{self._telemetryName}/ActiveTargetInfo/Heading', self._activeTargetInfo.heading)
+    telemetry.log(f'{self._telemetryName}/ActiveTargetInfo/IsDistanceValid', self._activeTargetInfo.isDistanceValid)
+    telemetry.log(f'{self._telemetryName}/ActiveTargetInfo/IsHeadingValid', self._activeTargetInfo.isHeadingValid)

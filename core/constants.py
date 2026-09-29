@@ -134,7 +134,7 @@ class Subsystems:
       cruiseVelocity = 12000.0,
       maxAcceleration = 24000.0,
       allowedProfileError = 0.1,
-      telemetryName = "Subsystems/Intake/Rollers/Leader"
+      telemetryName = "Robot/Subsystems/Intake/Rollers/Leader"
     )
 
     ROLLERS_FOLLOWER_CONFIG = FollowerControlModuleConfig(
@@ -144,7 +144,7 @@ class Subsystems:
       motorType = ROLLERS_LEADER_CONFIG.motorType,
       currentLimit = ROLLERS_LEADER_CONFIG.currentLimit,
       isInverted = True,
-      telemetryName = "Subsystems/Intake/Rollers/Follower"
+      telemetryName = "Robot/Subsystems/Intake/Rollers/Follower"
     )
 
     ARM_RETRACT_POSITION: float = 10.0
@@ -167,7 +167,7 @@ class Subsystems:
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
-      telemetryName = "Subsystems/Hopper/Indexer"
+      telemetryName = "Robot/Subsystems/Hopper/Indexer"
     )
 
     ELEVATOR_CONFIG = VelocityControlModuleConfig(
@@ -182,7 +182,7 @@ class Subsystems:
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
-      telemetryName = "Subsystems/Hopper/Elevator"
+      telemetryName = "Robot/Subsystems/Hopper/Elevator"
     )    
     
     INDEXER_RUN_SPEED: units.percent = 0.8
@@ -233,7 +233,7 @@ class Subsystems:
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
-      telemetryName = "Subsystems/Launcher/Leader"
+      telemetryName = "Robot/Subsystems/Launcher/Leader"
     )     
 
     LAUNCHER_FOLLOWER_CONFIG = FollowerControlModuleConfig(
@@ -243,7 +243,7 @@ class Subsystems:
       motorType = LAUNCHER_LEADER_CONFIG.motorType,
       currentLimit = LAUNCHER_LEADER_CONFIG.currentLimit,
       isInverted = True,
-      telemetryName = "Subsystems/Launcher/Follower"
+      telemetryName = "Robot/Subsystems/Launcher/Follower"
     )
 
     LAUNCHER_ACCELERATOR_CONFIG = VelocityControlModuleConfig(
@@ -258,7 +258,7 @@ class Subsystems:
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
-      telemetryName = "Subsystems/Launcher/Accelerator"
+      telemetryName = "Robot/Subsystems/Launcher/Accelerator"
     )       
 
     LAUNCHER_TRANSFORM = Transform3d(units.inchesToMeters(-4.75), units.inchesToMeters(7.875), units.inchesToMeters(25.3375), Rotation3d())

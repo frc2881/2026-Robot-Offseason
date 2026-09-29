@@ -22,6 +22,8 @@ class Localization():
     self._getDriveModulePositions = getDriveModulePositions
     self._poseSensors = poseSensors
 
+    self._telemetryName = "Robot/Services/Localization"
+
     self._poseEstimator = SwerveDrive4PoseEstimator(
       constants.Subsystems.Drive.SWERVE_DRIVE_KINEMATICS,
       Rotation2d.fromDegrees(self._getGyroHeading()),
@@ -35,6 +37,8 @@ class Localization():
     self._alliance: Optional[Alliance] = None
     self._zones: dict[Zone, Rectangle2d] = {}
     self._robotZone: Optional[Zone] = None
+
+    telemetry.log("Robot/Sensors/Pose/Names", list(c.getCameraName() for c in self._poseSensors), element_type = str)
 
     utils.addRobotPeriodic(self._periodic)
 
@@ -123,6 +127,6 @@ class Localization():
     return self._robotZone
 
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Services/Localization/Pose", self.getRobotPose())
-    telemetry.log("Robot/Services/Localization/HasValidPoseSensorResult", self.hasValidPoseSensorResult())
-    telemetry.log("Robot/Services/Localization/Zone", self._robotZone.name if self._robotZone is not None else "")
+    telemetry.log(f'{self._telemetryName}/Pose', self.getRobotPose())
+    telemetry.log(f'{self._telemetryName}/HasValidPoseSensorResult', self.hasValidPoseSensorResult())
+    telemetry.log(f'{self._telemetryName}/Zone', self._robotZone.name if self._robotZone is not None else "")

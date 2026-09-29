@@ -26,6 +26,8 @@ class Intake(Subsystem):
     self._constants = constants.Subsystems.Intake
     self._getFuelLevel = getFuelLevel
 
+    self._telemetryName = "Robot/Subsystems/Intake"
+
     self._arm = RelativePositionControlModule(self._constants.ARM_CONFIG)
     self._rollersLeader = VelocityControlModule(self._constants.ROLLERS_LEADER_CONFIG)
     self._rollersFollower = FollowerControlModule(self._constants.ROLLERS_FOLLOWER_CONFIG)
@@ -119,6 +121,6 @@ class Intake(Subsystem):
     self._rollersLeader.reset()
 
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Subsystems/Intake/State", self._state.name)
-    telemetry.log("Robot/Subsystems/Intake/IsExtended", self.isExtended())
-    telemetry.log("Robot/Subsystems/Intake/IsRunning", self.isRunning())
+    telemetry.log(f'{self._telemetryName}/State', self._state.name)
+    telemetry.log(f'{self._telemetryName}/IsExtended', self.isExtended())
+    telemetry.log(f'{self._telemetryName}/IsRunning', self.isRunning())
