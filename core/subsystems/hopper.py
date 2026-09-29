@@ -1,13 +1,13 @@
 from typing import Callable
 from enum import Enum, auto
-from commands2 import Subsystem, Command, cmd
 from wpilib import Timer
 from wpimath import units
+from commands2 import Subsystem, Command, cmd
 from lib import logger, telemetry, utils
-from lib.classes import MotorIdleMode
+from lib.classes import IdleMode
+from lib.components.velocity_control_module import VelocityControlModule
 from core.classes import FuelLevel
 import core.constants as constants
-from lib.components.velocity_control_module import VelocityControlModule
 
 class HopperState(Enum):
   Idle = auto()
@@ -28,8 +28,8 @@ class Hopper(Subsystem):
     self._elevator = VelocityControlModule(self._constants.ELEVATOR_CONFIG)
     self._indexer = VelocityControlModule(self._constants.INDEXER_CONFIG)
 
-    self._elevator.setIdleMode(MotorIdleMode.Coast)
-    self._indexer.setIdleMode(MotorIdleMode.Coast)
+    self._elevator.setIdleMode(IdleMode.Coast)
+    self._indexer.setIdleMode(IdleMode.Coast)
 
     self._state = HopperState.Idle
 
@@ -85,6 +85,6 @@ class Hopper(Subsystem):
     return FuelLevel.Empty
   
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Hopper/State", self._state.name)
-    telemetry.log("Robot/Hopper/FuelLevel", self.getFuelLevel().name)
-    telemetry.log("Robot/Hopper/IsRunning", self.isRunning())
+    telemetry.log("Robot/Subsystems/Hopper/State", self._state.name)
+    telemetry.log("Robot/Subsystems/Hopper/FuelLevel", self.getFuelLevel().name)
+    telemetry.log("Robot/Subsystems/Hopper/IsRunning", self.isRunning())

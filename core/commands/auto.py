@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
-from commands2 import Command, cmd
 from wpilib import SendableChooser, SmartDashboard
 from wpimath.geometry import Transform2d, Rotation2d
+from commands2 import Command, cmd
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.path import PathPlannerPath, PathConstraints, GoalEndState
 from lib import logger, telemetry, utils
@@ -34,7 +34,7 @@ class Auto:
     self._autos.addOption("1: Bump Right Loop", self.auto_BUMP_RIGHT_LOOP)
     self._autos.addOption("2: Bump Left Loop", self.auto_BUMP_LEFT_LOOP)
     self._autos.addOption("3: Hub Depot", self.auto_HUB_DEPOT)
-    # self._autos.addOption("6: Custom", self.auto_CUSTOM)
+    # self._autos.addOption("99: Custom", self.auto_CUSTOM)
 
     self._autos.onChange(lambda auto: self.set(auto()))
     SmartDashboard.putData("Robot/Auto", self._autos)
@@ -68,9 +68,7 @@ class Auto:
       self.followPath(AutoPath.BUMP_RIGHT_LOOP).deadlineFor(
         cmd.waitSeconds(1.5).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(165.0)))
       ),
-      self._robot.game.launchFuel().deadlineFor(
-        cmd.waitSeconds(2.0).andThen(self._robot.game.agitateRobot())
-      )
+      self._robot.game.launchFuel()
     ).withName("Auto:BUMP_RIGHT_LOOP")
 
   def auto_BUMP_LEFT_LOOP(self) -> Command:
@@ -78,9 +76,7 @@ class Auto:
       self.followPath(AutoPath.BUMP_LEFT_LOOP).deadlineFor(
         cmd.waitSeconds(1.5).andThen(self._robot.game.runIntake().deadlineFor(self._robot.game.alignTurretToHeading(200.0)))
       ),
-      self._robot.game.launchFuel().deadlineFor(
-        cmd.waitSeconds(2.0).andThen(self._robot.game.agitateRobot())
-      )
+      self._robot.game.launchFuel()
     ).withName("Auto:BUMP_LEFT_LOOP")
 
   def auto_HUB_DEPOT(self) -> Command:

@@ -1,17 +1,15 @@
 from typing import Callable, Optional
-from commands2 import Subsystem, Command, cmd
-from wpilib import SmartDashboard, SendableChooser
 from wpimath import units
 from wpimath.controller import PIDController, ProfiledPIDControllerRadians, HolonomicDriveController
 from wpimath.trajectory import TrapezoidProfileRadians
 from wpimath.filter import SlewRateLimiter
 from wpimath.geometry import Rotation2d, Pose2d, Pose3d
 from wpimath.kinematics import ChassisSpeeds, SwerveModulePosition, SwerveModuleState, SwerveDrive4Kinematics
-from ntcore import NetworkTableInstance
+from commands2 import Subsystem, Command, cmd
 from pathplannerlib.util import DriveFeedforwards
 from lib import logger, telemetry, utils
-from lib.classes import State, Position, MotorIdleMode, SpeedMode, DriveOrientation, SwerveModuleLocation
-from lib.components.swerve_module import SwerveModule
+from lib.classes import State, Position, IdleMode, SpeedMode, DriveOrientation, SwerveDriveModuleLocation
+from lib.components.swerve_drive_module import SwerveDriveModule
 import core.constants as constants
 
 class Drive(Subsystem):
@@ -25,21 +23,20 @@ class Drive(Subsystem):
     self._constants = constants.Subsystems.Drive
 
     self._modules = (
-      SwerveModule(self._constants.SWERVE_MODULE_CONFIGS[SwerveModuleLocation.FrontLeft]),
-      SwerveModule(self._constants.SWERVE_MODULE_CONFIGS[SwerveModuleLocation.FrontRight]),
-      SwerveModule(self._constants.SWERVE_MODULE_CONFIGS[SwerveModuleLocation.RearLeft]),
-      SwerveModule(self._constants.SWERVE_MODULE_CONFIGS[SwerveModuleLocation.RearRight])
+      SwerveDriveModule(self._constants.SWERVE_DRIVE_MODULE_CONFIGS[SwerveDriveModuleLocation.FrontLeft]),
+      SwerveDriveModule(self._constants.SWERVE_DRIVE_MODULE_CONFIGS[SwerveDriveModuleLocation.FrontRight]),
+      SwerveDriveModule(self._constants.SWERVE_DRIVE_MODULE_CONFIGS[SwerveDriveModuleLocation.RearLeft]),
+      SwerveDriveModule(self._constants.SWERVE_DRIVE_MODULE_CONFIGS[SwerveDriveModuleLocation.RearRight])
     )
-    self._modulesStatesPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("/SmartDashboard/Robot/Drive/Modules/States", SwerveModuleState).publish()
     self._modulesLockPosition = Position.Unlocked
 
     self._driftCorrectionState = State.Stopped
-    self._driftCorrectionController = PIDController(*self._constants.DRIFT_CORRECTION_CONSTANTS.rotationPID)
+    self._driftCorrectionController = PIDController(*self._constants.DRIFT_CORRECTION_CONSTANTS.rotationControlPID)
     self._driftCorrectionController.setTolerance(self._constants.DRIFT_CORRECTION_CONSTANTS.rotationPositionTolerance)
     self._driftCorrectionController.enableContinuousInput(-180.0, 180.0)
 
     self._targetHeadingAlignmentState = State.Stopped
-    self._targetHeadingAlignmentController = PIDController(*self._constants.TARGET_HEADING_ALIGNMENT_CONSTANTS.rotationPID)
+    self._targetHeadingAlignmentController = PIDController(*self._constants.TARGET_HEADING_ALIGNMENT_CONSTANTS.rotationControlPID)
     self._targetHeadingAlignmentController.setTolerance(self._constants.TARGET_HEADING_ALIGNMENT_CONSTANTS.rotationPositionTolerance)
     self._targetHeadingAlignmentController.enableContinuousInput(-180.0, 180.0)
     self._targetHeadingAlignmentRotationInput: units.percent = 0
@@ -47,10 +44,10 @@ class Drive(Subsystem):
     self._targetPose: Optional[Pose2d] = None
     self._targetPoseAlignmentState = State.Stopped
     self._targetPoseAlignmentController = HolonomicDriveController(
-      PIDController(*self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.translationPID),
-      PIDController(*self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.translationPID),
+      PIDController(*self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.translationControlPID),
+      PIDController(*self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.translationControlPID),
       ProfiledPIDControllerRadians(
-        *self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.rotationPID, 
+        *self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.rotationControlPID, 
         TrapezoidProfileRadians.Constraints(units.degreesToRadians(self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.rotationMaxVelocity), units.degreesToRadians(self._constants.TARGET_POSE_ALIGNMENT_CONSTANTS.rotationMaxVelocity / 2))
       )
     )
@@ -64,33 +61,6 @@ class Drive(Subsystem):
     self._translationXInputLimiter = SlewRateLimiter(self._constants.INPUT_RATE_LIMIT_DEMO)
     self._translationYInputLimiter = SlewRateLimiter(self._constants.INPUT_RATE_LIMIT_DEMO)
     self._rotationInputLimiter = SlewRateLimiter(self._constants.INPUT_RATE_LIMIT_DEMO)
-
-    self._speedMode: SpeedMode = SpeedMode.Competition
-    speedMode = SendableChooser()
-    speedMode.setDefaultOption(SpeedMode.Competition.name, SpeedMode.Competition)
-    speedMode.addOption(SpeedMode.Demo.name, SpeedMode.Demo)
-    speedMode.onChange(lambda speedMode: setattr(self, "_speedMode", speedMode))
-    SmartDashboard.putData("Robot/Drive/SpeedMode", speedMode)
-
-    self._orientation: DriveOrientation = DriveOrientation.Field
-    orientation = SendableChooser()
-    orientation.setDefaultOption(DriveOrientation.Field.name, DriveOrientation.Field)
-    orientation.addOption(DriveOrientation.Robot.name, DriveOrientation.Robot)
-    orientation.onChange(lambda orientation: setattr(self, "_orientation", orientation))
-    SmartDashboard.putData("Robot/Drive/Orientation", orientation)
-
-    self._driftCorrection: State = State.Enabled
-    driftCorrection = SendableChooser()
-    driftCorrection.setDefaultOption(State.Enabled.name, State.Enabled)
-    driftCorrection.addOption(State.Disabled.name, State.Disabled)
-    driftCorrection.onChange(lambda driftCorrection: setattr(self, "_driftCorrection", driftCorrection))
-    SmartDashboard.putData("Robot/Drive/DriftCorrection", driftCorrection)
-
-    idleMode = SendableChooser()
-    idleMode.setDefaultOption(MotorIdleMode.Brake.name, MotorIdleMode.Brake)
-    idleMode.addOption(MotorIdleMode.Coast.name, MotorIdleMode.Coast)
-    idleMode.onChange(lambda idleMode: self._setIdleMode(idleMode))
-    SmartDashboard.putData("Robot/Drive/IdleMode", idleMode)
 
   def periodic(self) -> None:
     self._updateTelemetry()
@@ -106,7 +76,7 @@ class Drive(Subsystem):
     if self._targetHeadingAlignmentState == State.Running:
       rotationInput = self._targetHeadingAlignmentRotationInput
     else:
-      if self._driftCorrection == State.Enabled:
+      if self._constants.DRIFT_CORRECTION == State.Enabled:
         isTranslating: bool = translationXInput != 0 or translationYInput != 0
         isRotating: bool = rotationInput != 0
         if isTranslating and not isRotating and not self._driftCorrectionState == State.Running:
@@ -120,7 +90,7 @@ class Drive(Subsystem):
           if self._driftCorrectionController.atSetpoint():
             rotationInput = 0
   
-    if self._speedMode == SpeedMode.Demo:
+    if self._constants.SPEED_MODE == SpeedMode.Demo:
       translationXInput = self._translationXInputLimiter.calculate(translationXInput * self._constants.INPUT_LIMIT_DEMO) if translationXInput != 0 else 0
       translationYInput = self._translationYInputLimiter.calculate(translationYInput * self._constants.INPUT_LIMIT_DEMO) if translationYInput != 0 else 0
       rotationInput = self._rotationInputLimiter.calculate(rotationInput * self._constants.INPUT_LIMIT_DEMO) if rotationInput != 0 else 0
@@ -131,7 +101,7 @@ class Drive(Subsystem):
     
     self.setChassisSpeeds(
       ChassisSpeeds.fromFieldRelativeSpeeds(translationXVelocity, translationYVelocity, units.degreesToRadians(rotationVelocity), Rotation2d.fromDegrees(self._getGyroHeading()))
-      if self._orientation == DriveOrientation.Field else
+      if self._constants.DRIVE_ORIENTATION == DriveOrientation.Field else
       ChassisSpeeds(translationXVelocity, translationYVelocity, units.degreesToRadians(rotationVelocity))
     )
 
@@ -139,23 +109,23 @@ class Drive(Subsystem):
     self._setModuleStates(chassisSpeeds)
 
   def getChassisSpeeds(self) -> ChassisSpeeds:
-    return self._constants.DRIVE_KINEMATICS.toChassisSpeeds(self._getModuleStates())
+    return self._constants.SWERVE_DRIVE_KINEMATICS.toChassisSpeeds(self._getModuleStates())
 
   def getModulePositions(self) -> tuple[SwerveModulePosition, SwerveModulePosition, SwerveModulePosition, SwerveModulePosition]:
     return (
-      self._modules[SwerveModuleLocation.FrontLeft].getPosition(), 
-      self._modules[SwerveModuleLocation.FrontRight].getPosition(), 
-      self._modules[SwerveModuleLocation.RearLeft].getPosition(), 
-      self._modules[SwerveModuleLocation.RearRight].getPosition()
+      self._modules[SwerveDriveModuleLocation.FrontLeft].getPosition(), 
+      self._modules[SwerveDriveModuleLocation.FrontRight].getPosition(), 
+      self._modules[SwerveDriveModuleLocation.RearLeft].getPosition(), 
+      self._modules[SwerveDriveModuleLocation.RearRight].getPosition()
     )
 
   def _setModuleStates(self, chassisSpeeds: ChassisSpeeds) -> None: 
     swerveModuleStates = SwerveDrive4Kinematics.desaturateWheelSpeeds(
-      self._constants.DRIVE_KINEMATICS.toSwerveModuleStates(
+      self._constants.SWERVE_DRIVE_KINEMATICS.toSwerveModuleStates(
         ChassisSpeeds.discretize(
-          self._constants.DRIVE_KINEMATICS.toChassisSpeeds(
+          self._constants.SWERVE_DRIVE_KINEMATICS.toChassisSpeeds(
             SwerveDrive4Kinematics.desaturateWheelSpeeds(
-              self._constants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds), 
+              self._constants.SWERVE_DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds), 
               self._constants.TRANSLATION_MAX_VELOCITY
             )), 0.02
         )
@@ -170,20 +140,20 @@ class Drive(Subsystem):
 
   def _getModuleStates(self) -> tuple[SwerveModuleState, SwerveModuleState, SwerveModuleState, SwerveModuleState]:
     return (
-      self._modules[SwerveModuleLocation.FrontLeft].getState(), 
-      self._modules[SwerveModuleLocation.FrontRight].getState(), 
-      self._modules[SwerveModuleLocation.RearLeft].getState(), 
-      self._modules[SwerveModuleLocation.RearRight].getState()
+      self._modules[SwerveDriveModuleLocation.FrontLeft].getState(), 
+      self._modules[SwerveDriveModuleLocation.FrontRight].getState(), 
+      self._modules[SwerveDriveModuleLocation.RearLeft].getState(), 
+      self._modules[SwerveDriveModuleLocation.RearRight].getState()
     )
 
-  def _setIdleMode(self, idleMode: MotorIdleMode) -> None:
+  def _setIdleMode(self, idleMode: IdleMode) -> None:
     for module in self._modules: module.setIdleMode(idleMode)
     telemetry.log("Robot/Drive/IdleMode/selected", idleMode.name)
 
   def holdCoastMode(self) -> Command:
     return self.startEnd(
-      lambda: self._setIdleMode(MotorIdleMode.Coast),
-      lambda: self._setIdleMode(MotorIdleMode.Brake)
+      lambda: self._setIdleMode(IdleMode.Coast),
+      lambda: self._setIdleMode(IdleMode.Brake)
     ).withName("Drive:HoldCoastMode")
 
   def lockSwerveModules(self) -> Command:
@@ -264,9 +234,9 @@ class Drive(Subsystem):
     self._targetPose = None
 
   def _updateTelemetry(self) -> None:
-    self._modulesStatesPublisher.set(list(self._getModuleStates()))
-    telemetry.log("Robot/Drive/TargetPoseAlignmentState", self._targetPoseAlignmentState.name)
-    telemetry.log("Robot/Drive/IsAlignedToTargetPose", self.isAlignedToTargetPose())
-    telemetry.log("Robot/Drive/TargetHeadingAlignmentState", self._targetHeadingAlignmentState.name)
-    telemetry.log("Robot/Drive/IsAlignedToTargetHeading", self.isAlignedToTargetHeading())
-    telemetry.log("Robot/Drive/Modules/LockPosition", self._modulesLockPosition.name)
+    telemetry.log("Robot/Subsystems/Drive/Modules/States", list(self._getModuleStates()), element_type = SwerveModuleState)
+    telemetry.log("Robot/Subsystems/Drive/TargetPoseAlignmentState", self._targetPoseAlignmentState.name)
+    telemetry.log("Robot/Subsystems/Drive/IsAlignedToTargetPose", self.isAlignedToTargetPose())
+    telemetry.log("Robot/Subsystems/Drive/TargetHeadingAlignmentState", self._targetHeadingAlignmentState.name)
+    telemetry.log("Robot/Subsystems/Drive/IsAlignedToTargetHeading", self.isAlignedToTargetHeading())
+    telemetry.log("Robot/Subsystems/Drive/Modules/LockPosition", self._modulesLockPosition.name)

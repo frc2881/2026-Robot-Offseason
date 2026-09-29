@@ -14,20 +14,21 @@ from lib.classes import (
   Alliance, 
   PID,
   Range,
+  State,
+  SpeedMode,
+  DriveOrientation,
   MotorModel,
   FeedForwardGains,
-  SwerveModuleGearKit,
-  SwerveModuleConstants, 
-  SwerveModuleConfig, 
-  SwerveModuleLocation, 
+  SwerveDriveModuleGearKit,
+  SwerveDriveModuleConfigConstants, 
+  SwerveDriveModuleConfig, 
+  SwerveDriveModuleLocation, 
   PoseAlignmentConstants,
   HeadingAlignmentConstants,
-  RelativePositionControlModuleConstants,
   RelativePositionControlModuleConfig,
   VelocityControlModuleConfig,
-  VelocityControlModuleConstants,
-  FollowerModuleConfig,
-  FollowerModuleConstants,
+  FollowerControlModuleConfig,
+  XboxControllerConfig,
   ButtonControllerConfig,
   PoseSensorConfig,
   BinarySensorConfig,
@@ -46,49 +47,47 @@ class Subsystems:
     TRACK_WIDTH: units.meters = units.inchesToMeters(26.5)
 
     _drivingMotorModel = MotorModel.NEOVortex
-    _swerveModuleGearKit = SwerveModuleGearKit.Low
-    
-    _swerveModuleConstants = SwerveModuleConstants(
-      wheelDiameter = units.inchesToMeters(3.0),
-      drivingMotorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+    _swerveDriveModuleGearKit = SwerveDriveModuleGearKit.Low
+    _swerveDriveModuleConstants = SwerveDriveModuleConfigConstants(
+      drivingControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       drivingMotorType = SparkLowLevel.MotorType.kBrushless,
-      drivingMotorFreeSpeed = lib.constants.Motors.MOTOR_FREE_SPEEDS[_drivingMotorModel],
-      drivingMotorReduction = lib.constants.Drive.SWERVE_MODULE_GEAR_RATIOS[_swerveModuleGearKit],
-      drivingMotorCurrentLimit = 60,
-      drivingMotorPID = PID(0.04, 0, 0),
-      turningMotorCurrentLimit = 20,
-      turningMotorPID = PID(1.0, 0, 0),
-      turningMotorAbsoluteEncoderConfig = AbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoderV2()
+      drivingFreeSpeed = lib.constants.Motors.FREE_SPEEDS[_drivingMotorModel],
+      drivingGearReduction = lib.constants.Drive.Swerve.GEAR_RATIOS[_swerveDriveModuleGearKit],
+      drivingCurrentLimit = 60,
+      drivingControlPID = PID(0.04, 0, 0),
+      turningCurrentLimit = 20,
+      turningControlPID = PID(1.0, 0, 0),
+      turningEncoderConfig = AbsoluteEncoderConfig.Presets.REV_ThroughBoreEncoderV2(),
+      wheelDiameter = units.inchesToMeters(3.0),
+      telemetryName = "Robot/Subsystems/Drive/Modules"
     )
-
-    SWERVE_MODULE_CONFIGS: tuple[SwerveModuleConfig, SwerveModuleConfig, SwerveModuleConfig, SwerveModuleConfig] = (
-      SwerveModuleConfig(SwerveModuleLocation.FrontLeft, 2, 3, -90, Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveModuleConstants),
-      SwerveModuleConfig(SwerveModuleLocation.FrontRight, 4, 5, 0, Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveModuleConstants),
-      SwerveModuleConfig(SwerveModuleLocation.RearLeft, 6, 7, 180, Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveModuleConstants),
-      SwerveModuleConfig(SwerveModuleLocation.RearRight, 8, 9, 90, Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveModuleConstants)
+    SWERVE_DRIVE_MODULE_CONFIGS: tuple[SwerveDriveModuleConfig, SwerveDriveModuleConfig, SwerveDriveModuleConfig, SwerveDriveModuleConfig] = (
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.FrontLeft, 2, 3, -90, Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveDriveModuleConstants),
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.FrontRight, 4, 5, 0, Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveDriveModuleConstants),
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.RearLeft, 6, 7, 180, Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveDriveModuleConstants),
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.RearRight, 8, 9, 90, Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveDriveModuleConstants)
     )
+    SWERVE_DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.chassisTranslation for c in SWERVE_DRIVE_MODULE_CONFIGS))
 
-    DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.translation for c in SWERVE_MODULE_CONFIGS))
-
-    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.SWERVE_MODULE_FREE_SPEEDS[_drivingMotorModel][_swerveModuleGearKit] * 1.0
+    TRANSLATION_MAX_VELOCITY: units.meters_per_second = lib.constants.Drive.Swerve.FREE_SPEEDS[_drivingMotorModel][_swerveDriveModuleGearKit] * 1.0
     ROTATION_MAX_VELOCITY: units.degrees_per_second = 720.0
 
     TARGET_POSE_ALIGNMENT_CONSTANTS = PoseAlignmentConstants(
-      translationPID = PID(4.0, 0, 0),
+      translationControlPID = PID(4.0, 0, 0),
       translationMaxVelocity = 3.2,
       translationPositionTolerance = 0.15,
-      rotationPID = PID(4.0, 0, 0),
+      rotationControlPID = PID(4.0, 0, 0),
       rotationMaxVelocity = 720.0,
       rotationPositionTolerance = 5.0
     )
 
     TARGET_HEADING_ALIGNMENT_CONSTANTS = HeadingAlignmentConstants(
-      rotationPID = PID(0.01, 0, 0), 
+      rotationControlPID = PID(0.01, 0, 0), 
       rotationPositionTolerance = 1.0
     )
 
     DRIFT_CORRECTION_CONSTANTS = HeadingAlignmentConstants(
-      rotationPID = PID(0.01, 0, 0), 
+      rotationControlPID = PID(0.01, 0, 0), 
       rotationPositionTolerance = 0.5
     )
 
@@ -98,131 +97,169 @@ class Subsystems:
     INPUT_LIMIT_DEMO: units.percent = 0.5
     INPUT_RATE_LIMIT_DEMO: units.percent = 0.5
 
-  class Intake:
-    ARM_CONFIG = RelativePositionControlModuleConfig("Intake/Arm", 18, False, RelativePositionControlModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
-      motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
-      motorPID = PID(1.0, 0, 0),
-      motorOutputRange = Range(-1.0, 0.8),
-      motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionCruiseVelocity = 12000.0,
-      motorMotionMaxAcceleration = 24000.0,
-      motorMotionAllowedProfileError = 0.5,
-      motorRelativeEncoderPositionConversionFactor = 1.0,
-      motorSoftLimitForward = 50.0,
-      motorSoftLimitReverse = 0,
-      motorHomingSpeed = 0.5,
-      motorHomedPosition = 0
-    ))
-        
-    ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig("Intake/Rollers/Leader", 17, False, VelocityControlModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
-      motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 100, 
-      motorPID = PID(0.0001, 0, 0),
-      motorOutputRange = Range(-1.0, 1.0),
-      motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionCruiseVelocity = 12000.0,
-      motorMotionMaxAcceleration = 24000.0
-    ))
+    SPEED_MODE = SpeedMode.Competition
+    DRIVE_ORIENTATION = DriveOrientation.Field
+    DRIFT_CORRECTION = State.Enabled
 
-    ROLLERS_FOLLOWER_CONFIG = FollowerModuleConfig("Intake/Rollers/Follower", 19, 17, True, FollowerModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+  class Intake:
+    ARM_CONFIG = RelativePositionControlModuleConfig(
+      id = 18, 
+      controllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = ROLLERS_LEADER_CONFIG.constants.motorCurrentLimit
-    ))
+      currentLimit = 60,
+      isInverted = False,
+      softLimitForward = 50.0,
+      softLimitReverse = 0,
+      controlPID = PID(1.0, 0, 0),
+      outputRange = Range(-1.0, 0.8),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      cruiseVelocity = 12000.0,
+      maxAcceleration = 24000.0,
+      allowedProfileError = 0.5,
+      homingPosition = 0,
+      homingSpeed = 0.5,
+      positionConversionFactor = 1.0,
+      telemetryName = "Robot/Subsystems/Intake/Arm"
+    )
+        
+    ROLLERS_LEADER_CONFIG = VelocityControlModuleConfig(
+      id = 17,
+      controllerType = SparkLowLevel.SparkModel.kSparkFlex,
+      motorType = SparkLowLevel.MotorType.kBrushless,
+      currentLimit = 100,
+      isInverted = False,
+      controlPID = PID(0.0001, 0, 0),
+      outputRange = Range(-1.0, 1.0),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      cruiseVelocity = 12000.0,
+      maxAcceleration = 24000.0,
+      allowedProfileError = 0.1,
+      telemetryName = "Subsystems/Intake/Rollers/Leader"
+    )
+
+    ROLLERS_FOLLOWER_CONFIG = FollowerControlModuleConfig(
+      id = 19,
+      leaderId = 17,
+      controllerType = ROLLERS_LEADER_CONFIG.controllerType,
+      motorType = ROLLERS_LEADER_CONFIG.motorType,
+      currentLimit = ROLLERS_LEADER_CONFIG.currentLimit,
+      isInverted = True,
+      telemetryName = "Subsystems/Intake/Rollers/Follower"
+    )
 
     ARM_RETRACT_POSITION: float = 10.0
     ARM_INTAKE_POSITION: float = 48.0
-    ARM_AGITATE_RANGE = Range(32.0, 48.0)
+    ARM_AGITATE_RANGE = Range(24.0, 48.0)
     ARM_AGITATE_TIMEOUT: units.seconds = 1.0
     ROLLERS_INTAKE_SPEED: units.percent = 1.0
-    ROLLERS_AGITATE_SPEED: units.percent = 0.2
+    ROLLERS_AGITATE_SPEED: units.percent = 0.1
 
   class Hopper:
-    INDEXER_CONFIG = VelocityControlModuleConfig("Hopper/Indexer", 14, True, VelocityControlModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+    INDEXER_CONFIG = VelocityControlModuleConfig(
+      id = 14,
+      controllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
-      motorPID = PID(0.0001, 0, 0),
-      motorOutputRange = Range(-1.0, 1.0),
-      motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionCruiseVelocity = 6000.0, 
-      motorMotionMaxAcceleration = 12000.0
-    ))
+      currentLimit = 60,
+      isInverted = True,
+      controlPID = PID(0.0001, 0, 0),
+      outputRange = Range(-1.0, 1.0),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      cruiseVelocity = 6000.0,
+      maxAcceleration = 12000.0,
+      allowedProfileError = 0.1,
+      telemetryName = "Subsystems/Hopper/Indexer"
+    )
 
-    ELEVATOR_CONFIG = VelocityControlModuleConfig("Hopper/Elevator", 16, False, VelocityControlModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+    ELEVATOR_CONFIG = VelocityControlModuleConfig(
+      id = 16,
+      controllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
-      motorPID = PID(0.0001, 0, 0),
-      motorOutputRange = Range(-1.0, 1.0),
-      motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionCruiseVelocity = 6000.0,
-      motorMotionMaxAcceleration = 12000.0
-    ))
+      currentLimit = 60,
+      isInverted = False,
+      controlPID = PID(0.0001, 0, 0),
+      outputRange = Range(-1.0, 1.0),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      cruiseVelocity = 6000.0,
+      maxAcceleration = 12000.0,
+      allowedProfileError = 0.1,
+      telemetryName = "Subsystems/Hopper/Elevator"
+    )    
     
-    INDEXER_RUN_SPEED: units.percent = 0.75
+    INDEXER_RUN_SPEED: units.percent = 0.8
     ELEVATOR_RUN_SPEED: units.percent = 1.0
     AGITATE_SPEED: units.percent = 0.75
     INDEXER_RUN_DELAY: units.seconds = 0.5
 
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
-      FuelLevel.Full: 240,
-      FuelLevel.Mid: 360,
+      FuelLevel.Full: 220,
+      FuelLevel.Mid: 340,
       FuelLevel.Low: 460
     }
 
   class Turret:
-    TURRET_CONFIG = RelativePositionControlModuleConfig("Turret", 13, False, RelativePositionControlModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+    TURRET_CONFIG = RelativePositionControlModuleConfig( 
+      id = 13, 
+      controllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
-      motorRelativeEncoderPositionConversionFactor = 360.0 / 21.0,
-      motorPID = PID(0.02, 0, 0.002),
-      motorOutputRange = Range(-1.0, 1.0),
-      motorFeedForwardGains  = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionCruiseVelocity = 30000.0, 
-      motorMotionMaxAcceleration = 60000.0,
-      motorMotionAllowedProfileError = 0.25,
-      motorSoftLimitForward = 320.0,
-      motorSoftLimitReverse = -10.0,
-      motorHomingSpeed = 0.1,
-      motorHomedPosition = -20.25
-    ))
+      currentLimit = 60,
+      isInverted = False,
+      softLimitForward = 320.0,
+      softLimitReverse = -10.0,
+      controlPID = PID(0.02, 0, 0.002),
+      outputRange = Range(-1.0, 1.0),
+      feedForwardGains  = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      cruiseVelocity = 30000.0, 
+      maxAcceleration = 60000.0,
+      allowedProfileError = 0.25,
+      homingPosition = -20.25,
+      homingSpeed = 0.1,
+      positionConversionFactor = 360.0 / 21.0,
+      telemetryName = "Robot/Subsystems/Turret"
+    )
 
     ROTATION_RANGE = Range(-10.0, 320.0)
     WRAP_ANGLE_INPUT_RANGE = Range(-10.0, 350.0)
 
   class Launcher:
-    LAUNCHER_LEADER_CONFIG = VelocityControlModuleConfig("Launcher/Leader", 10, True, VelocityControlModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+    LAUNCHER_LEADER_CONFIG = VelocityControlModuleConfig(
+      id = 10,
+      controllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
-      motorPID = PID(0.0001, 0, 0),
-      motorOutputRange = Range(-1.0, 1.0),
-      motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionCruiseVelocity = 6000.0,
-      motorMotionMaxAcceleration = 12000.0
-    ))
+      currentLimit = 60,
+      isInverted = True,
+      controlPID = PID(0.0001, 0, 0),
+      outputRange = Range(-1.0, 1.0),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      cruiseVelocity = 6000.0,
+      maxAcceleration = 12000.0,
+      allowedProfileError = 0.1,
+      telemetryName = "Subsystems/Launcher/Leader"
+    )     
 
-    LAUNCHER_FOLLOWER_CONFIG = FollowerModuleConfig("Launcher/Follower", 11, 10, True, FollowerModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
-      motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = LAUNCHER_LEADER_CONFIG.constants.motorCurrentLimit
-    ))
+    LAUNCHER_FOLLOWER_CONFIG = FollowerControlModuleConfig(
+      id = 11,
+      leaderId = 10,
+      controllerType = LAUNCHER_LEADER_CONFIG.controllerType,
+      motorType = LAUNCHER_LEADER_CONFIG.motorType,
+      currentLimit = LAUNCHER_LEADER_CONFIG.currentLimit,
+      isInverted = True,
+      telemetryName = "Subsystems/Launcher/Follower"
+    )
 
-    LAUNCHER_ACCELERATOR_CONFIG = VelocityControlModuleConfig("Launcher/Accelerator", 12, False, VelocityControlModuleConstants(
-      motorControllerType = SparkLowLevel.SparkModel.kSparkFlex,
+    LAUNCHER_ACCELERATOR_CONFIG = VelocityControlModuleConfig(
+      id = 12,
+      controllerType = SparkLowLevel.SparkModel.kSparkFlex,
       motorType = SparkLowLevel.MotorType.kBrushless,
-      motorCurrentLimit = 60,
-      motorPID = PID(0.0001, 0, 0),
-      motorOutputRange = Range(-1.0, 1.0),
-      motorFeedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.MOTOR_FREE_SPEEDS[MotorModel.NEOVortex]),
-      motorMotionCruiseVelocity = 6000.0,
-      motorMotionMaxAcceleration = 12000.0
-    ))
+      currentLimit = 60,
+      isInverted = False,
+      controlPID = PID(0.0001, 0, 0),
+      outputRange = Range(-1.0, 1.0),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      cruiseVelocity = 6000.0,
+      maxAcceleration = 12000.0,
+      allowedProfileError = 0.1,
+      telemetryName = "Subsystems/Launcher/Accelerator"
+    )       
 
     LAUNCHER_TRANSFORM = Transform3d(units.inchesToMeters(-4.75), units.inchesToMeters(7.875), units.inchesToMeters(25.3375), Rotation3d())
     LAUNCHER_ACCELERATOR_SPEED_RATIO: units.percent = 1.5
@@ -254,10 +291,10 @@ class Services:
       LaunchMetric(distance = 9.0, speed = 0.81, time = 1.65),
       LaunchMetric(distance = 10.0, speed = 0.87, time = 1.75)
     )
-    LATENCY_COMPENSATION: units.seconds = 0.05
+    LATENCY_COMPENSATION: units.seconds = 0.1
     VELOCITY_COMPENSATION_RANGE: Range = Range(0.1, 3.5)
     FUEL_DRAG_COEFFICIENT: float = 0.15
-    TURRET_HEADING_TOLERANCE: units.degrees = 5.0
+    TURRET_HEADING_TOLERANCE: units.degrees = 8.0
 
 class Sensors: 
   class Gyro:
@@ -266,66 +303,69 @@ class Sensors:
   class Pose:
     POSE_SENSOR_CONFIGS: tuple[PoseSensorConfig, ...] = (
       PoseSensorConfig(
-        name = "FrontLeft", 
+        cameraName = "FrontLeft", 
         transform = Transform3d(
           Translation3d(x = units.inchesToMeters(-0.5), y = units.inchesToMeters(14.5), z = units.inchesToMeters(18.0)),
           Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-5.5), yaw = units.degreesToRadians(88.0))
         ),
         stream = "http://10.28.81.6:1186/?action=stream",
-        aprilTagFieldLayout = _aprilTagFieldLayout
+        aprilTagFieldLayout = _aprilTagFieldLayout,
+        telemetryName = "Robot/Sensors/Pose"
       ),
       PoseSensorConfig(
-        name = "FrontRight",
+        cameraName = "FrontRight",
         transform = Transform3d(
         Translation3d(x = units.inchesToMeters(1.0), y = units.inchesToMeters(-14.0), z = units.inchesToMeters(8.75)),
         Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-17.0), yaw = units.degreesToRadians(-90.0))
       ),
         stream = "http://10.28.81.7:1184/?action=stream",
-        aprilTagFieldLayout = _aprilTagFieldLayout
+        aprilTagFieldLayout = _aprilTagFieldLayout,
+        telemetryName = "Robot/Sensors/Pose"
       ),
       PoseSensorConfig(
-        name = "RearLeft",
+        cameraName = "RearLeft",
         transform = Transform3d(
           Translation3d(x = units.inchesToMeters(-9.75), y = units.inchesToMeters(12.75), z = units.inchesToMeters(10.25)),
           Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-33.5), yaw = units.degreesToRadians(160.0))
         ),
         stream = "http://10.28.81.6:1182/?action=stream",
-        aprilTagFieldLayout = _aprilTagFieldLayout
+        aprilTagFieldLayout = _aprilTagFieldLayout,
+        telemetryName = "Robot/Sensors/Pose"
       ),
       PoseSensorConfig(
-        name = "RearRight",
+        cameraName = "RearRight",
         transform = Transform3d(
           Translation3d(x = units.inchesToMeters(-9.75), y = units.inchesToMeters(-12.75), z = units.inchesToMeters(10.25)),
           Rotation3d(roll = units.degreesToRadians(0), pitch = units.degreesToRadians(-34.0), yaw = units.degreesToRadians(-160.0))
         ),
         stream = "http://10.28.81.7:1182/?action=stream",
-        aprilTagFieldLayout = _aprilTagFieldLayout
+        aprilTagFieldLayout = _aprilTagFieldLayout,
+        telemetryName = "Robot/Sensors/Pose"
       )
     )
 
   class Binary:
-    INDEXER_SENSOR_CONFIG = BinarySensorConfig(
-      name = "Indexer", 
-      channel = 2
+    INDEXER_SENSOR_CONFIG = BinarySensorConfig( 
+      channel = 2,
+      telemetryName = "Robot/Sensors/Fuel/Indexer"
     )
 
   class Distance:
-    HOPPER_SENSOR_CONFIG = DistanceSensorConfig(
-      name = "Hopper", 
+    HOPPER_SENSOR_CONFIG = DistanceSensorConfig( 
       channel = 1, 
       pulseWidthConversionFactor = 2.0, 
       minTargetDistance = 0, 
-      maxTargetDistance = 580
+      maxTargetDistance = 580,
+      telemetryName = "Robot/Sensors/Fuel/Hopper"
     )
 
 class Cameras:
   DRIVER_STREAM = "http://10.28.81.6:1184/?action=stream"
 
 class Controllers:
-  DRIVER_CONTROLLER_PORT: int = 0
-  OPERATOR_CONTROLLER_PORT: int = 1
-  INPUT_DEADBAND: units.percent = 0.1
-  HOMING_BUTTON_CONFIG = ButtonControllerConfig(name = "Homing", channel = 0)
+  DRIVER_CONTROLLER_CONFIG = XboxControllerConfig(port = 0, inputDeadband = 0.1, telemetryName = "Robot/Controllers/Driver")
+  OPERATOR_CONTROLLER_CONFIG = XboxControllerConfig(port = 1, inputDeadband = 0.1, telemetryName = "Robot/Controllers/Operator")
+  HOMING_BUTTON_CONFIG = ButtonControllerConfig(channel = 0, telemetryName = "Robot/Controllers/Homing")
 
 class Game:
   class Robot:
@@ -333,7 +373,7 @@ class Game:
     NAME: str = "Rosetta Stone (Offseason)"
 
   class Commands:
-    INTAKE_AGITATE_DELAY: units.seconds = 3.0
+    pass
 
   class Field:
     LENGTH = _aprilTagFieldLayout.getFieldLength()

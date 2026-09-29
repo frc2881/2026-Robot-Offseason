@@ -1,10 +1,10 @@
 from typing import Callable
-from commands2 import Subsystem, Command
 from wpimath import units
+from commands2 import Subsystem, Command
 from lib import logger, telemetry, utils
-from lib.classes import MotorIdleMode
+from lib.classes import IdleMode
 from lib.components.velocity_control_module import VelocityControlModule
-from lib.components.follower_module import FollowerModule
+from lib.components.follower_control_module import FollowerControlModule
 import core.constants as constants
 
 class Launcher(Subsystem):
@@ -13,12 +13,12 @@ class Launcher(Subsystem):
     self._constants = constants.Subsystems.Launcher
 
     self._launcherLeader = VelocityControlModule(self._constants.LAUNCHER_LEADER_CONFIG)
-    self._launcherFollower = FollowerModule(self._constants.LAUNCHER_FOLLOWER_CONFIG)
+    self._launcherFollower = FollowerControlModule(self._constants.LAUNCHER_FOLLOWER_CONFIG)
     self._launcherAccelerator = VelocityControlModule(self._constants.LAUNCHER_ACCELERATOR_CONFIG)
 
-    self._launcherLeader.setIdleMode(MotorIdleMode.Coast)
-    self._launcherFollower.setIdleMode(MotorIdleMode.Coast)
-    self._launcherAccelerator.setIdleMode(MotorIdleMode.Coast)
+    self._launcherLeader.setIdleMode(IdleMode.Coast)
+    self._launcherFollower.setIdleMode(IdleMode.Coast)
+    self._launcherAccelerator.setIdleMode(IdleMode.Coast)
 
   def periodic(self) -> None:
     self._updateTelemetry()
@@ -41,6 +41,6 @@ class Launcher(Subsystem):
     self._launcherAccelerator.reset()
 
   def _updateTelemetry(self) -> None:
-    telemetry.log("Robot/Launcher/Speed", self._launcherLeader.getSpeed())
-    telemetry.log("Robot/Launcher/TargetSpeed", self._launcherLeader.getTargetSpeed())
-    telemetry.log("Robot/Launcher/IsAtTargetSpeed", self.isAtTargetSpeed())
+    telemetry.log("Robot/Subsystems/Launcher/Speed", self._launcherLeader.getSpeed())
+    telemetry.log("Robot/Subsystems/Launcher/TargetSpeed", self._launcherLeader.getTargetSpeed())
+    telemetry.log("Robot/Subsystems/Launcher/IsAtTargetSpeed", self.isAtTargetSpeed())

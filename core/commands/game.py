@@ -1,11 +1,10 @@
 from typing import TYPE_CHECKING
-from commands2 import Command, cmd
 from wpilib import RobotBase
 from wpimath import units
-from wpimath.geometry import Pose3d, Rotation3d
+from commands2 import Command, cmd
 from lib import logger, telemetry, utils
 from lib.classes import ControllerRumbleMode, ControllerRumblePattern
-from core.classes import AutoPath, Target, Zone
+from core.classes import AutoPath, Target, Zone, FuelLevel
 import core.constants as constants
 if TYPE_CHECKING: from core.robot import RobotCore
 
@@ -102,11 +101,13 @@ class Game:
       .deadlineFor(
         self.alignTurretToActiveTarget(),
         self._robot.launcher.run_(lambda: self._robot.targeting.getActiveTargetInfo().speed),
-        self.agitateHopper().withTimeout(0.75).andThen(
+        self.agitateHopper().withTimeout(0.5).andThen(
           self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange()).deadlineFor(
-            cmd.waitSeconds(constants.Game.Commands.INTAKE_AGITATE_DELAY).andThen(
-              self._robot.intake.agitate()
-            )
+            cmd.select({
+              FuelLevel.Full: cmd.waitSeconds(2.5),
+              FuelLevel.Mid: cmd.waitSeconds(1.5)
+            }, lambda: self._robot.hopper.getFuelLevel())
+            .andThen(self._robot.intake.agitate())
           )
         )
       )
@@ -119,7 +120,7 @@ class Game:
     return (
       self.alignTurretToHeading(0)
       .deadlineFor(
-        self._robot.launcher.run_(lambda: 0.35),
+        self._robot.launcher.run_(lambda: 0.25),
         self._robot.hopper.run_(lambda: True)
       )
       .withName("Game:LaunchFuelDemo")

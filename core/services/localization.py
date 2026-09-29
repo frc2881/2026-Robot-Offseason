@@ -4,7 +4,6 @@ from wpimath import units
 from wpimath.geometry import Pose2d, Rotation2d, Rectangle2d
 if TYPE_CHECKING: from wpimath.kinematics import SwerveModulePosition
 from wpimath.estimator import SwerveDrive4PoseEstimator
-from ntcore import NetworkTableInstance
 from lib import logger, telemetry, utils
 from lib.classes import Alliance, RobotState, PoseSensorResult, PoseSensorResultType, Value
 if TYPE_CHECKING: from lib.sensors.pose import PoseSensor
@@ -24,7 +23,7 @@ class Localization():
     self._poseSensors = poseSensors
 
     self._poseEstimator = SwerveDrive4PoseEstimator(
-      constants.Subsystems.Drive.DRIVE_KINEMATICS,
+      constants.Subsystems.Drive.SWERVE_DRIVE_KINEMATICS,
       Rotation2d.fromDegrees(self._getGyroHeading()),
       self._getDriveModulePositions(),
       Pose2d()
@@ -33,8 +32,6 @@ class Localization():
     self._hasValidPoseSensorResult: bool = False
     self._validPoseSensorResultTimer = Timer()
     
-    self._robotPosePublisher = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Robot/Localization/Pose", Pose2d).publish()
-
     self._alliance: Optional[Alliance] = None
     self._zones: dict[Zone, Rectangle2d] = {}
     self._robotZone: Optional[Zone] = None
@@ -126,6 +123,6 @@ class Localization():
     return self._robotZone
 
   def _updateTelemetry(self) -> None:
-    self._robotPosePublisher.set(self.getRobotPose())
-    telemetry.log("Robot/Localization/HasValidPoseSensorResult", self.hasValidPoseSensorResult())
-    telemetry.log("Robot/Localization/Zone", self._robotZone.name if self._robotZone is not None else "")
+    telemetry.log("Robot/Services/Localization/Pose", self.getRobotPose())
+    telemetry.log("Robot/Services/Localization/HasValidPoseSensorResult", self.hasValidPoseSensorResult())
+    telemetry.log("Robot/Services/Localization/Zone", self._robotZone.name if self._robotZone is not None else "")

@@ -1,9 +1,9 @@
 from typing import Callable
 from wpilib import DriverStation
 from wpimath import units
+from lib import logger, telemetry, utils
 from lib.classes import RobotState
 from lib.controllers.lights import LightsController
-from lib import logger, telemetry, utils
 from core.classes import LightsMode, MatchState, HubState
 
 class Lights():
