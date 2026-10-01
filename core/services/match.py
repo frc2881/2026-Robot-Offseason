@@ -72,6 +72,7 @@ class Match():
     return self._hubState
 
   def _updateTelemetry(self) -> None:
+    telemetry.log("Match/Time",  utils.getMatchTime())
     telemetry.log("Match/SelectedAlliance", self._selectedAlliance.name if self._selectedAlliance is not None else "None")
     telemetry.log("Match/State", self.getMatchState().name)
     telemetry.log("Match/StateTime", math.floor(self.getMatchStateTime()))
