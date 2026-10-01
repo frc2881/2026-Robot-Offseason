@@ -58,12 +58,12 @@ class Targeting():
 
   def _updateActiveTarget(self) -> None:
     match self._getRobotZone():
-      case Zone.AllianceZoneLeft | Zone.AllianceZoneRight:
-        self._activeTarget = Target.Hub
-      case Zone.NeutralZoneLeft:
-        self._activeTarget = Target.ShuttleLeft
-      case Zone.NeutralZoneRight:
-        self._activeTarget = Target.ShuttleRight
+      case Zone.ALLIANCE_ZONE_LEFT | Zone.ALLIANCE_ZONE_RIGHT:
+        self._activeTarget = Target.HUB
+      case Zone.NEUTRAL_ZONE_LEFT:
+        self._activeTarget = Target.SHUTTLE_LEFT
+      case Zone.NEUTRAL_ZONE_RIGHT:
+        self._activeTarget = Target.SHUTTLE_RIGHT
       case _:
         self._activeTarget = None
 

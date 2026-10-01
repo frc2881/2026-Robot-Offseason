@@ -18,9 +18,9 @@ class Launcher(Subsystem):
     self._launcherFollower = FollowerControlModule(self._constants.LAUNCHER_FOLLOWER_CONFIG)
     self._launcherAccelerator = VelocityControlModule(self._constants.LAUNCHER_ACCELERATOR_CONFIG)
 
-    self._launcherLeader.setIdleMode(IdleMode.Coast)
-    self._launcherFollower.setIdleMode(IdleMode.Coast)
-    self._launcherAccelerator.setIdleMode(IdleMode.Coast)
+    self._launcherLeader.setIdleMode(IdleMode.COAST)
+    self._launcherFollower.setIdleMode(IdleMode.COAST)
+    self._launcherAccelerator.setIdleMode(IdleMode.COAST)
 
   def periodic(self) -> None:
     self._updateTelemetry()

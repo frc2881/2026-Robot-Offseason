@@ -11,11 +11,11 @@ from core.classes import FuelLevel
 import core.constants as constants
 
 class IntakeState(Enum):
-  Idle = auto()
-  Running = auto()
-  Agitating = auto()
-  Ejecting = auto()
-  Retracting = auto()
+  IDLE = auto()
+  RUNNING = auto()
+  AGITATING = auto()
+  EJECTING = auto()
+  RETRACTING = auto()
 
 class Intake(Subsystem):
   def __init__(
@@ -32,11 +32,11 @@ class Intake(Subsystem):
     self._rollersLeader = VelocityControlModule(self._constants.ROLLERS_LEADER_CONFIG)
     self._rollersFollower = FollowerControlModule(self._constants.ROLLERS_FOLLOWER_CONFIG)
 
-    self._arm.setIdleMode(IdleMode.Coast)
-    self._rollersLeader.setIdleMode(IdleMode.Coast)
-    self._rollersFollower.setIdleMode(IdleMode.Coast)
+    self._arm.setIdleMode(IdleMode.COAST)
+    self._rollersLeader.setIdleMode(IdleMode.COAST)
+    self._rollersFollower.setIdleMode(IdleMode.COAST)
 
-    self._state = IntakeState.Idle
+    self._state = IntakeState.IDLE
     self._isRunning: bool = False
     self._isAgitatingIn: bool = True
     self._agitationTimer = Timer()
@@ -51,16 +51,16 @@ class Intake(Subsystem):
       self._rollersLeader.setSpeed(self._constants.ROLLERS_INTAKE_SPEED if self.isExtended() else 0)
     else:
       match self._state:
-        case IntakeState.Agitating:
+        case IntakeState.AGITATING:
           self._arm.setPosition(self._constants.ARM_AGITATE_RANGE.min if self._isAgitatingIn else self._constants.ARM_AGITATE_RANGE.max)
           if self._arm.isAtTargetPosition() or self._agitationTimer.hasElapsed(self._constants.ARM_AGITATE_TIMEOUT):
             self._isAgitatingIn = not self._isAgitatingIn
             self._agitationTimer.restart()
           self._rollersLeader.setSpeed(self._constants.ROLLERS_AGITATE_SPEED)
-        case IntakeState.Ejecting:
+        case IntakeState.EJECTING:
           self._arm.setPosition(self._constants.ARM_INTAKE_POSITION)
           self._rollersLeader.setSpeed(-self._constants.ROLLERS_INTAKE_SPEED)
-        case IntakeState.Retracting:
+        case IntakeState.RETRACTING:
           self._arm.setPosition(self._constants.ARM_RETRACT_POSITION)
           self._rollersLeader.setSpeed(0)
         case _:
@@ -81,20 +81,20 @@ class Intake(Subsystem):
 
   def agitate(self) -> Command:
     return cmd.runEnd(
-      lambda: self._setState(IntakeState.Agitating),
-      lambda: self._setState(IntakeState.Idle)
+      lambda: self._setState(IntakeState.AGITATING),
+      lambda: self._setState(IntakeState.IDLE)
     ).beforeStarting(lambda: self._resetAgitation())
   
   def retract(self) -> Command:
     return cmd.startEnd(
-      lambda: self._setState(IntakeState.Retracting),
-      lambda: self._setState(IntakeState.Idle)
+      lambda: self._setState(IntakeState.RETRACTING),
+      lambda: self._setState(IntakeState.IDLE)
     )
 
   def eject(self) -> Command:
     return cmd.startEnd(
-      lambda: self._setState(IntakeState.Ejecting),
-      lambda: self._setState(IntakeState.Idle)
+      lambda: self._setState(IntakeState.EJECTING),
+      lambda: self._setState(IntakeState.IDLE)
     )
 
   def _resetAgitation(self) -> None:

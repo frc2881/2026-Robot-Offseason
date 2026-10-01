@@ -32,16 +32,16 @@ class Game:
 
   def driveRobotOverBump(self) -> Command:
     return (
-      self.alignRobotToNearestTargetPose([Target.BumpAllianceZoneRight, Target.BumpAllianceZoneLeft, Target.BumpNeutralZoneRight, Target.BumpNeutralZoneLeft])
+      self.alignRobotToNearestTargetPose([Target.BUMP_ALLIANCE_ZONE_RIGHT, Target.BUMP_ALLIANCE_ZONE_LEFT, Target.BUMP_NEUTRAL_ZONE_RIGHT, Target.BUMP_NEUTRAL_ZONE_LEFT])
       .andThen(
         cmd.select({
-          Zone.AllianceZoneRight: self._robot.auto.followPath(AutoPath.AZ_NZ_RIGHT).deadlineFor(self.alignTurretToHeading(0)),
-          Zone.AllianceZoneLeft: self._robot.auto.followPath(AutoPath.AZ_NZ_LEFT).deadlineFor(self.alignTurretToHeading(0)),
-          Zone.NeutralZoneRight: self._robot.auto.followPath(AutoPath.NZ_AZ_RIGHT).deadlineFor(self.alignTurretToHeading(225.0)),
-          Zone.NeutralZoneLeft: self._robot.auto.followPath(AutoPath.NZ_AZ_LEFT).deadlineFor(self.alignTurretToHeading(135.0)),
+          Zone.ALLIANCE_ZONE_RIGHT: self._robot.auto.followPath(AutoPath.AZ_NZ_RIGHT).deadlineFor(self.alignTurretToHeading(0)),
+          Zone.ALLIANCE_ZONE_LEFT: self._robot.auto.followPath(AutoPath.AZ_NZ_LEFT).deadlineFor(self.alignTurretToHeading(0)),
+          Zone.NEUTRAL_ZONE_RIGHT: self._robot.auto.followPath(AutoPath.NZ_AZ_RIGHT).deadlineFor(self.alignTurretToHeading(225.0)),
+          Zone.NEUTRAL_ZONE_LEFT: self._robot.auto.followPath(AutoPath.NZ_AZ_LEFT).deadlineFor(self.alignTurretToHeading(135.0)),
         }, lambda: self._robot.localization.getRobotZone())
       )
-      .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
+      .andThen(self.rumbleControllers(ControllerRumbleMode.DRIVER))
       .withName("Game:DriveRobotOverBump")
     )
   
@@ -104,8 +104,8 @@ class Game:
         self.agitateHopper().withTimeout(0.5).andThen(
           self._robot.hopper.run_(lambda: self._robot.targeting.isActiveTargetInRange()).deadlineFor(
             cmd.select({
-              FuelLevel.Full: cmd.waitSeconds(2.5),
-              FuelLevel.Mid: cmd.waitSeconds(1.5)
+              FuelLevel.FULL: cmd.waitSeconds(2.5),
+              FuelLevel.MID: cmd.waitSeconds(1.5)
             }, lambda: self._robot.hopper.getFuelLevel())
             .andThen(self._robot.intake.agitate())
           )
@@ -129,19 +129,19 @@ class Game:
   def resetGyro(self) -> Command:
     return (
       self._robot.gyro.reset()
-      .andThen(self.rumbleControllers(ControllerRumbleMode.Driver))
+      .andThen(self.rumbleControllers(ControllerRumbleMode.DRIVER))
       .ignoringDisable(True)
       .withName("Game:ResetGyro")
     )
 
   def rumbleControllers(
     self, 
-    mode: ControllerRumbleMode = ControllerRumbleMode.Both, 
-    pattern: ControllerRumblePattern = ControllerRumblePattern.Short
+    mode: ControllerRumbleMode = ControllerRumbleMode.BOTH, 
+    pattern: ControllerRumblePattern = ControllerRumblePattern.SHORT
   ) -> Command:
     return cmd.parallel(
-      self._robot.driver.rumble(pattern).onlyIf(lambda: mode != ControllerRumbleMode.Operator),
-      self._robot.operator.rumble(pattern).onlyIf(lambda: mode != ControllerRumbleMode.Driver)
+      self._robot.driver.rumble(pattern).onlyIf(lambda: mode != ControllerRumbleMode.OPERATOR),
+      self._robot.operator.rumble(pattern).onlyIf(lambda: mode != ControllerRumbleMode.DRIVER)
     ).onlyIf(
       lambda: RobotBase.isReal() and not utils.isAutonomousMode()
     ).withName(f'Game:RumbleControllers:{ mode.name }:{ pattern.name }')

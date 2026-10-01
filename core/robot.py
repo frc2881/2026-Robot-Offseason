@@ -79,7 +79,7 @@ class RobotCore:
         self.intake.resetToHome(), 
         self.turret.resetToHome(),
         self.drive.holdCoastMode()
-      ).onlyWhile(lambda: utils.getRobotState() == RobotState.Disabled)
+      ).onlyWhile(lambda: utils.getRobotState() == RobotState.DISABLED)
       .ignoringDisable(True)
       .withName("HomingButton:Pressed")
     )
@@ -87,7 +87,7 @@ class RobotCore:
   def _setupDriver(self) -> None:
     self.drive.setDefaultCommand(self.drive.drive(self.driver.getLeftY, self.driver.getLeftX, self.driver.getRightX))
     self.driver.leftStick().whileTrue(self.drive.lockSwerveModules())
-    self.driver.rightStick().whileTrue(self.game.alignRobotToTargetHeading(Target.Hub))
+    self.driver.rightStick().whileTrue(self.game.alignRobotToTargetHeading(Target.HUB))
     # self.driver.leftTrigger().whileTrue(cmd.none())
     # self.driver.rightTrigger().whileTrue(cmd.none())
     self.driver.leftBumper().whileTrue(self.game.driveRobotOverBump())

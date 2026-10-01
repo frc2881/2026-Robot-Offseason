@@ -46,8 +46,8 @@ class Subsystems:
     WHEEL_BASE: units.meters = units.inchesToMeters(20.5)
     TRACK_WIDTH: units.meters = units.inchesToMeters(26.5)
 
-    _drivingMotorModel = MotorModel.NEOVortex
-    _swerveDriveModuleGearKit = SwerveDriveModuleGearKit.Low
+    _drivingMotorModel = MotorModel.NEO_VORTEX
+    _swerveDriveModuleGearKit = SwerveDriveModuleGearKit.LOW
     _swerveDriveModuleConstants = SwerveDriveModuleConfigConstants(
       drivingControllerType = SparkLowLevel.SparkModel.kSparkFlex,
       drivingMotorType = SparkLowLevel.MotorType.kBrushless,
@@ -62,10 +62,10 @@ class Subsystems:
       telemetryName = "Robot/Subsystems/Drive/Modules"
     )
     SWERVE_DRIVE_MODULE_CONFIGS: tuple[SwerveDriveModuleConfig, SwerveDriveModuleConfig, SwerveDriveModuleConfig, SwerveDriveModuleConfig] = (
-      SwerveDriveModuleConfig(SwerveDriveModuleLocation.FrontLeft, 2, 3, -90, Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveDriveModuleConstants),
-      SwerveDriveModuleConfig(SwerveDriveModuleLocation.FrontRight, 4, 5, 0, Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveDriveModuleConstants),
-      SwerveDriveModuleConfig(SwerveDriveModuleLocation.RearLeft, 6, 7, 180, Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveDriveModuleConstants),
-      SwerveDriveModuleConfig(SwerveDriveModuleLocation.RearRight, 8, 9, 90, Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveDriveModuleConstants)
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.FRONT_LEFT, 2, 3, -90, Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveDriveModuleConstants),
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.FRONT_RIGHT, 4, 5, 0, Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveDriveModuleConstants),
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.REAR_LEFT, 6, 7, 180, Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2), _swerveDriveModuleConstants),
+      SwerveDriveModuleConfig(SwerveDriveModuleLocation.REAR_RIGHT, 8, 9, 90, Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2), _swerveDriveModuleConstants)
     )
     SWERVE_DRIVE_KINEMATICS = SwerveDrive4Kinematics(*(c.chassisTranslation for c in SWERVE_DRIVE_MODULE_CONFIGS))
 
@@ -97,9 +97,9 @@ class Subsystems:
     INPUT_LIMIT_DEMO: units.percent = 0.5
     INPUT_RATE_LIMIT_DEMO: units.percent = 0.5
 
-    SPEED_MODE = SpeedMode.Competition
-    DRIVE_ORIENTATION = DriveOrientation.Field
-    DRIFT_CORRECTION = State.Enabled
+    SPEED_MODE = SpeedMode.COMPETITION
+    DRIVE_ORIENTATION = DriveOrientation.FIELD
+    DRIFT_CORRECTION = State.ENABLED
 
   class Intake:
     ARM_CONFIG = RelativePositionControlModuleConfig(
@@ -112,7 +112,7 @@ class Subsystems:
       softLimitReverse = 0,
       controlPID = PID(1.0, 0, 0),
       outputRange = Range(-1.0, 0.8),
-      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEO_VORTEX]),
       cruiseVelocity = 12000.0,
       maxAcceleration = 24000.0,
       allowedProfileError = 0.5,
@@ -130,7 +130,7 @@ class Subsystems:
       isInverted = False,
       controlPID = PID(0.0001, 0, 0),
       outputRange = Range(-1.0, 1.0),
-      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEO_VORTEX]),
       cruiseVelocity = 12000.0,
       maxAcceleration = 24000.0,
       allowedProfileError = 0.1,
@@ -163,7 +163,7 @@ class Subsystems:
       isInverted = True,
       controlPID = PID(0.0001, 0, 0),
       outputRange = Range(-1.0, 1.0),
-      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEO_VORTEX]),
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
@@ -178,7 +178,7 @@ class Subsystems:
       isInverted = False,
       controlPID = PID(0.0001, 0, 0),
       outputRange = Range(-1.0, 1.0),
-      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEO_VORTEX]),
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
@@ -191,9 +191,9 @@ class Subsystems:
     INDEXER_RUN_DELAY: units.seconds = 0.5
 
     FUEL_LEVEL_SENSOR_DISTANCES: dict[FuelLevel, units.millimeters] = {
-      FuelLevel.Full: 220,
-      FuelLevel.Mid: 340,
-      FuelLevel.Low: 460
+      FuelLevel.FULL: 220,
+      FuelLevel.MID: 340,
+      FuelLevel.LOW: 460
     }
 
   class Turret:
@@ -207,7 +207,7 @@ class Subsystems:
       softLimitReverse = -10.0,
       controlPID = PID(0.02, 0, 0.002),
       outputRange = Range(-1.0, 1.0),
-      feedForwardGains  = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      feedForwardGains  = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEO_VORTEX]),
       cruiseVelocity = 30000.0, 
       maxAcceleration = 60000.0,
       allowedProfileError = 0.25,
@@ -229,7 +229,7 @@ class Subsystems:
       isInverted = True,
       controlPID = PID(0.0001, 0, 0),
       outputRange = Range(-1.0, 1.0),
-      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEO_VORTEX]),
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
@@ -254,7 +254,7 @@ class Subsystems:
       isInverted = False,
       controlPID = PID(0.0001, 0, 0),
       outputRange = Range(-1.0, 1.0),
-      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEOVortex]),
+      feedForwardGains = FeedForwardGains(velocity = 12.0 / lib.constants.Motors.FREE_SPEEDS[MotorModel.NEO_VORTEX]),
       cruiseVelocity = 6000.0,
       maxAcceleration = 12000.0,
       allowedProfileError = 0.1,
@@ -369,7 +369,7 @@ class Controllers:
 
 class Game:
   class Robot:
-    TYPE = RobotType.Competition
+    TYPE = RobotType.COMPETITION
     NAME: str = "Rosetta Stone (Offseason)"
 
   class Commands:
@@ -381,30 +381,30 @@ class Game:
     BOUNDS = Rectangle2d(Translation2d(0, 0), Translation2d(LENGTH, WIDTH))
 
     TARGETS: dict[Alliance, dict[Target, Pose3d]] = {
-      Alliance.Blue: {
-        Target.Hub: Pose3d(4.625, 4.030, 1.263, Rotation3d(Rotation2d.fromDegrees(180.0))), 
-        Target.ShuttleRight: Pose3d(4.200, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(180.0))), 
-        Target.ShuttleLeft: Pose3d(4.200, 5.600, 0, Rotation3d(Rotation2d.fromDegrees(180.0))),
-        Target.BumpAllianceZoneRight: Pose3d(3.300, 2.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
-        Target.BumpAllianceZoneLeft: Pose3d(3.300, 5.700, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
-        Target.BumpNeutralZoneRight: Pose3d(5.800, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
-        Target.BumpNeutralZoneLeft: Pose3d(5.800, 5.500, 0, Rotation3d(Rotation2d.fromDegrees(45.0)))
+      Alliance.BLUE: {
+        Target.HUB: Pose3d(4.625, 4.030, 1.263, Rotation3d(Rotation2d.fromDegrees(180.0))), 
+        Target.SHUTTLE_RIGHT: Pose3d(4.200, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(180.0))), 
+        Target.SHUTTLE_LEFT: Pose3d(4.200, 5.600, 0, Rotation3d(Rotation2d.fromDegrees(180.0))),
+        Target.BUMP_ALLIANCE_ZONE_RIGHT: Pose3d(3.300, 2.600, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+        Target.BUMP_ALLIANCE_ZONE_LEFT: Pose3d(3.300, 5.700, 0, Rotation3d(Rotation2d.fromDegrees(-135.0))),
+        Target.BUMP_NEUTRAL_ZONE_RIGHT: Pose3d(5.800, 2.400, 0, Rotation3d(Rotation2d.fromDegrees(45.0))),
+        Target.BUMP_NEUTRAL_ZONE_LEFT: Pose3d(5.800, 5.500, 0, Rotation3d(Rotation2d.fromDegrees(45.0)))
       },
-      Alliance.Red: {}
+      Alliance.RED: {}
     }
-    for target in TARGETS[Alliance.Blue]:
-      pose = FlippingUtil.flipFieldPose(TARGETS[Alliance.Blue][target].toPose2d())
-      TARGETS[Alliance.Red][target] = Pose3d(pose.X(), pose.Y(), TARGETS[Alliance.Blue][target].Z(), Rotation3d(pose.rotation()))
+    for target in TARGETS[Alliance.BLUE]:
+      pose = FlippingUtil.flipFieldPose(TARGETS[Alliance.BLUE][target].toPose2d())
+      TARGETS[Alliance.RED][target] = Pose3d(pose.X(), pose.Y(), TARGETS[Alliance.BLUE][target].Z(), Rotation3d(pose.rotation()))
 
     ZONES: dict[Alliance, dict[Zone, Rectangle2d]] = {
-      Alliance.Blue: {
-        Zone.AllianceZoneRight: Rectangle2d(Translation2d(0, 0), Translation2d(4.400, 4.022)),
-        Zone.AllianceZoneLeft: Rectangle2d(Translation2d(0, 4.022), Translation2d(4.400, 8.043)),
-        Zone.NeutralZoneRight: Rectangle2d(Translation2d(5.600, 0), Translation2d(11.350, 4.022)),
-        Zone.NeutralZoneLeft: Rectangle2d(Translation2d(5.600, 4.022), Translation2d(11.350, 8.043))
+      Alliance.BLUE: {
+        Zone.ALLIANCE_ZONE_RIGHT: Rectangle2d(Translation2d(0, 0), Translation2d(4.400, 4.022)),
+        Zone.ALLIANCE_ZONE_LEFT: Rectangle2d(Translation2d(0, 4.022), Translation2d(4.400, 8.043)),
+        Zone.NEUTRAL_ZONE_RIGHT: Rectangle2d(Translation2d(5.600, 0), Translation2d(11.350, 4.022)),
+        Zone.NEUTRAL_ZONE_LEFT: Rectangle2d(Translation2d(5.600, 4.022), Translation2d(11.350, 8.043))
       },
-      Alliance.Red: {}
+      Alliance.RED: {}
     }
-    for zone in ZONES[Alliance.Blue]:
-      rectangle = ZONES[Alliance.Blue][zone]
-      ZONES[Alliance.Red][zone] = Rectangle2d(FlippingUtil.flipFieldPose(rectangle.center()), rectangle.xwidth, rectangle.ywidth)
+    for zone in ZONES[Alliance.BLUE]:
+      rectangle = ZONES[Alliance.BLUE][zone]
+      ZONES[Alliance.RED][zone] = Rectangle2d(FlippingUtil.flipFieldPose(rectangle.center()), rectangle.xwidth, rectangle.ywidth)

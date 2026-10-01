@@ -10,9 +10,9 @@ from core.classes import FuelLevel
 import core.constants as constants
 
 class HopperState(Enum):
-  Idle = auto()
-  Running = auto()
-  Agitating = auto()
+  IDLE = auto()
+  RUNNING = auto()
+  AGITATING = auto()
 
 class Hopper(Subsystem):
   def __init__(
@@ -30,10 +30,10 @@ class Hopper(Subsystem):
     self._elevator = VelocityControlModule(self._constants.ELEVATOR_CONFIG)
     self._indexer = VelocityControlModule(self._constants.INDEXER_CONFIG)
 
-    self._elevator.setIdleMode(IdleMode.Coast)
-    self._indexer.setIdleMode(IdleMode.Coast)
+    self._elevator.setIdleMode(IdleMode.COAST)
+    self._indexer.setIdleMode(IdleMode.COAST)
 
-    self._state = HopperState.Idle
+    self._state = HopperState.IDLE
 
     self._indexerDelayTimer = Timer()
 
@@ -43,14 +43,14 @@ class Hopper(Subsystem):
 
   def _updateState(self) -> None:
     match self._state:
-      case HopperState.Running:
+      case HopperState.RUNNING:
         self._elevator.setSpeed(self._constants.ELEVATOR_RUN_SPEED)
         if self._indexerDelayTimer.hasElapsed(self._constants.INDEXER_RUN_DELAY):
           self._indexer.setSpeed(self._constants.INDEXER_RUN_SPEED)
-      case HopperState.Agitating:
+      case HopperState.AGITATING:
         self._elevator.setSpeed(-self._constants.AGITATE_SPEED)
         self._indexer.setSpeed(-self._constants.AGITATE_SPEED)
-      case HopperState.Idle:
+      case HopperState.IDLE:
         self.reset()
 
   def _setState(self, state: HopperState):
@@ -58,14 +58,14 @@ class Hopper(Subsystem):
 
   def run_(self, isEnabled: Callable[[], bool]) -> Command:
     return cmd.runEnd(
-      lambda: self._setState(HopperState.Running if isEnabled() else HopperState.Idle),
-      lambda: self._setState(HopperState.Idle)
+      lambda: self._setState(HopperState.RUNNING if isEnabled() else HopperState.IDLE),
+      lambda: self._setState(HopperState.IDLE)
     ).beforeStarting(lambda: self._indexerDelayTimer.restart())
   
   def agitate(self) -> Command:
     return cmd.startEnd(
-      lambda: self._setState(HopperState.Agitating),
-      lambda: self._setState(HopperState.Idle)
+      lambda: self._setState(HopperState.AGITATING),
+      lambda: self._setState(HopperState.IDLE)
     )
 
   def isRunning(self) -> bool:
@@ -78,13 +78,13 @@ class Hopper(Subsystem):
   def getFuelLevel(self) -> FuelLevel:
     distance = self._getHopperSensorDistance()
     if distance > -1:
-      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.Full]:
-        return FuelLevel.Full
-      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.Mid]:
-        return FuelLevel.Mid
-      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.Low] or self._getIndexerSensorHasTarget():
-        return FuelLevel.Low
-    return FuelLevel.Empty
+      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.FULL]:
+        return FuelLevel.FULL
+      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.MID]:
+        return FuelLevel.MID
+      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.LOW] or self._getIndexerSensorHasTarget():
+        return FuelLevel.LOW
+    return FuelLevel.EMPTY
   
   def _updateTelemetry(self) -> None:
     telemetry.log(f'{self._telemetryName}/State', self._state.name)

@@ -13,19 +13,19 @@ class AutoPath(Enum):
   NZ_AZ_LEFT = auto()
 
 class Target(Enum):
-  Hub = auto()
-  ShuttleRight = auto()
-  ShuttleLeft = auto()
-  BumpAllianceZoneRight = auto()
-  BumpAllianceZoneLeft = auto()
-  BumpNeutralZoneRight = auto()
-  BumpNeutralZoneLeft = auto()
+  HUB = auto()
+  SHUTTLE_RIGHT = auto()
+  SHUTTLE_LEFT = auto()
+  BUMP_ALLIANCE_ZONE_RIGHT = auto()
+  BUMP_ALLIANCE_ZONE_LEFT = auto()
+  BUMP_NEUTRAL_ZONE_RIGHT = auto()
+  BUMP_NEUTRAL_ZONE_LEFT = auto()
 
 class Zone(Enum):
-  AllianceZoneRight = auto()
-  AllianceZoneLeft = auto()
-  NeutralZoneRight = auto()
-  NeutralZoneLeft = auto()
+  ALLIANCE_ZONE_RIGHT = auto()
+  ALLIANCE_ZONE_LEFT = auto()
+  NEUTRAL_ZONE_RIGHT = auto()
+  NEUTRAL_ZONE_LEFT = auto()
 
 @dataclass(frozen=False, slots=True)
 class TargetInfo:
@@ -42,33 +42,33 @@ class LaunchMetric:
   time: units.seconds
 
 class FuelLevel(IntEnum):
-  Empty = 0
-  Low = 1
-  Mid = 2
-  Full = 3
+  EMPTY = 0
+  LOW = 1
+  MID = 2
+  FULL = 3
 
 class MatchState(Enum):
-  Stopped = auto()
-  Auto = auto()
-  Transition = auto()
-  Shift1 = auto()
-  Shift2 = auto()
-  Shift3 = auto()
-  Shift4 = auto()
-  EndGame = auto()
+  STOPPED = auto()
+  AUTO = auto()
+  TRANSITION = auto()
+  SHIFT_1 = auto()
+  SHIFT_2 = auto()
+  SHIFT_3 = auto()
+  SHIFT_4 = auto()
+  END_GAME = auto()
 
 class HubState(Enum):
-  Inactive = auto()
-  Active = auto()
+  INACTIVE = auto()
+  ACTIVE = auto()
 
 class LightsMode(Enum):
-  Default = auto()
-  RobotNotConnected = auto()
-  RobotNotHomed = auto()
-  RobotIsHoming = auto()
-  VisionNotReady = auto()
-  HubStateActive = auto()
-  HubStateActiveEnding = auto()
-  HubStateInactive = auto()
-  HubStateInactiveEnding = auto()
-  ActiveTargetNotInRange = auto()
+  DEFAULT = auto()
+  ROBOT_NOT_CONNECTED = auto()
+  ROBOT_NOT_HOMED = auto()
+  ROBOT_IS_HOMING = auto()
+  VISION_NOT_READY = auto()
+  HUB_STATE_ACTIVE = auto()
+  HUB_STATE_ACTIVE_ENDING = auto()
+  HUB_STATE_INACTIVE = auto()
+  HUB_STATE_INACTIVE_ENDING = auto()
+  ACTIVE_TARGET_NOT_IN_RANGE = auto()

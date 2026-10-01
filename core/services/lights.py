@@ -34,31 +34,31 @@ class Lights():
 
   def _updateLights(self) -> None:
     if not DriverStation.isDSAttached():
-      self._lightsController.setMode(LightsMode.RobotNotConnected)
+      self._lightsController.setMode(LightsMode.ROBOT_NOT_CONNECTED)
       return
     
-    if utils.getRobotState() == RobotState.Disabled:
+    if utils.getRobotState() == RobotState.DISABLED:
       if self._isHoming():
-        self._lightsController.setMode(LightsMode.RobotIsHoming)
+        self._lightsController.setMode(LightsMode.ROBOT_IS_HOMING)
         return
       if not self._isHomed():
-        self._lightsController.setMode(LightsMode.RobotNotHomed)
+        self._lightsController.setMode(LightsMode.ROBOT_NOT_HOMED)
         return
       if not self._hasValidPoseSensorResult():
-        self._lightsController.setMode(LightsMode.VisionNotReady)
+        self._lightsController.setMode(LightsMode.VISION_NOT_READY)
         return
     
-    if utils.getRobotState() == RobotState.Enabled:
+    if utils.getRobotState() == RobotState.ENABLED:
       if not self._isActiveTargetInRange():
-        self._lightsController.setMode(LightsMode.ActiveTargetNotInRange)
+        self._lightsController.setMode(LightsMode.ACTIVE_TARGET_NOT_IN_RANGE)
         return
-      if self._getMatchState() != MatchState.Stopped:
+      if self._getMatchState() != MatchState.STOPPED:
         isMatchStateEnding = self._getMatchStateTime() < 5
         self._lightsController.setMode(
-          (LightsMode.HubStateActiveEnding if isMatchStateEnding else LightsMode.HubStateActive)
-          if self._getHubState() == HubState.Active else 
-          (LightsMode.HubStateInactiveEnding if isMatchStateEnding else LightsMode.HubStateInactive)
+          (LightsMode.HUB_STATE_ACTIVE_ENDING if isMatchStateEnding else LightsMode.HUB_STATE_ACTIVE)
+          if self._getHubState() == HubState.ACTIVE else 
+          (LightsMode.HUB_STATE_INACTIVE_ENDING if isMatchStateEnding else LightsMode.HUB_STATE_INACTIVE)
         )
         return
 
-    self._lightsController.setMode(LightsMode.Default)
+    self._lightsController.setMode(LightsMode.DEFAULT)
