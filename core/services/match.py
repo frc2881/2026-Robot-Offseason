@@ -1,5 +1,4 @@
 from typing import Optional
-import math
 from wpilib import DriverStation
 from wpimath import units
 from lib import logger, telemetry, utils
