@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING, Callable, Optional
 import math
 from wpimath import units
-from wpimath.geometry import Pose2d, Rotation2d, Twist2d, Pose3d, Rectangle2d
+from wpimath.geometry import Pose2d, Rotation2d, Twist2d, Pose3d
 from wpimath.kinematics import ChassisSpeeds
 from lib import logger, telemetry, utils
 from lib.classes import Alliance
-from core.classes import Target, TargetInfo, Zone
+from core.classes import Target, Zone, TargetInfo
 import core.constants as constants
 
 class Targeting():

@@ -118,7 +118,7 @@ class Game:
 
   def launchFuelDemo(self) -> Command:
     return (
-      self.alignTurretToHeading(0)
+      self.alignTurretToHeading(180.0)
       .deadlineFor(
         self._robot.launcher.run_(lambda: 0.25),
         self._robot.hopper.run_(lambda: True)
