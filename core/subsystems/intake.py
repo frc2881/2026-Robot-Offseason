@@ -4,9 +4,9 @@ from wpilib import Timer
 from commands2 import Subsystem, Command, cmd
 from lib import logger, telemetry, utils
 from lib.classes import IdleMode
-from lib.components.relative_position_control_module import RelativePositionControlModule
-from lib.components.velocity_control_module import VelocityControlModule
-from lib.components.follower_control_module import FollowerControlModule
+from lib.modules.relative_position_control import RelativePositionControlModule
+from lib.modules.velocity_control import VelocityControlModule
+from lib.modules.follower_control import FollowerControlModule
 from core.classes import FuelLevel
 import core.constants as constants
 

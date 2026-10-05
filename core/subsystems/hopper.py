@@ -5,7 +5,7 @@ from wpimath import units
 from commands2 import Subsystem, Command, cmd
 from lib import logger, telemetry, utils
 from lib.classes import IdleMode
-from lib.components.velocity_control_module import VelocityControlModule
+from lib.modules.velocity_control import VelocityControlModule
 from core.classes import FuelLevel
 import core.constants as constants
 

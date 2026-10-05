@@ -3,8 +3,8 @@ from wpimath import units
 from commands2 import Subsystem, Command
 from lib import logger, telemetry, utils
 from lib.classes import IdleMode
-from lib.components.velocity_control_module import VelocityControlModule
-from lib.components.follower_control_module import FollowerControlModule
+from lib.modules.velocity_control import VelocityControlModule
+from lib.modules.follower_control import FollowerControlModule
 import core.constants as constants
 
 class Launcher(Subsystem):

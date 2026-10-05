@@ -2,7 +2,7 @@ from typing import Callable
 from wpimath import units
 from commands2 import Subsystem, Command
 from lib import logger, telemetry, utils
-from lib.components.relative_position_control_module import RelativePositionControlModule
+from lib.modules.relative_position_control import RelativePositionControlModule
 import core.constants as constants
 
 class Turret(Subsystem):
