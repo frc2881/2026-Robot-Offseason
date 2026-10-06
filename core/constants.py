@@ -339,14 +339,13 @@ class Sensors:
       )
     )
 
-  class Binary:
-    INDEXER_SENSOR_CONFIG = BinarySensorConfig( 
+  class Proximity:
+    INDEXER_FUEL_SENSOR_CONFIG = BinarySensorConfig( 
       channel = 2,
       telemetryName = "Robot/Sensors/Fuel/Indexer"
     )
 
-  class Distance:
-    HOPPER_SENSOR_CONFIG = DistanceSensorConfig( 
+    HOPPER_FUEL_SENSOR_CONFIG = DistanceSensorConfig( 
       channel = 1, 
       pulseWidthConversionFactor = 2.0, 
       minTargetDistance = 0, 

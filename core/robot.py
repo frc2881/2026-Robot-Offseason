@@ -36,13 +36,13 @@ class RobotCore:
   def _initSensors(self) -> None:
     self.gyro = Gyro(constants.Sensors.Gyro.NAVX_PORT)
     self.poseSensors = tuple(PoseSensor(c) for c in constants.Sensors.Pose.POSE_SENSOR_CONFIGS)
-    self.hopperSensor = DistanceSensor(constants.Sensors.Distance.HOPPER_SENSOR_CONFIG)
-    self.indexerSensor = BinarySensor(constants.Sensors.Binary.INDEXER_SENSOR_CONFIG)
+    self.hopperFuelSensor = DistanceSensor(constants.Sensors.Proximity.HOPPER_FUEL_SENSOR_CONFIG)
+    self.indexerFuelSensor = BinarySensor(constants.Sensors.Proximity.INDEXER_FUEL_SENSOR_CONFIG)
 
   def _initSubsystems(self) -> None:
     self.drive = Drive(lambda: self.gyro.getHeading())
     self.intake = Intake(lambda: self.hopper.getFuelLevel())
-    self.hopper = Hopper(lambda: self.hopperSensor.getDistance(), lambda: self.indexerSensor.hasTarget())
+    self.hopper = Hopper(lambda: self.hopperFuelSensor.getDistance(), lambda: self.indexerFuelSensor.hasTarget())
     self.turret = Turret()
     self.launcher = Launcher()
     

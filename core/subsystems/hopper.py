@@ -17,13 +17,13 @@ class HopperState(Enum):
 class Hopper(Subsystem):
   def __init__(
       self,
-      getHopperSensorDistance: Callable[[], units.millimeters],
-      getIndexerSensorHasTarget: Callable[[], bool]
+      getHopperFuelSensorDistance: Callable[[], units.millimeters],
+      getIndexerFuelSensorHasTarget: Callable[[], bool]
     ) -> None:
     super().__init__()
     self._constants = constants.Subsystems.Hopper
-    self._getHopperSensorDistance = getHopperSensorDistance
-    self._getIndexerSensorHasTarget = getIndexerSensorHasTarget
+    self._getHopperFuelSensorDistance = getHopperFuelSensorDistance
+    self._getIndexerFuelSensorHasTarget = getIndexerFuelSensorHasTarget
 
     self._telemetryName = "Robot/Subsystems/Hopper"
 
@@ -76,13 +76,13 @@ class Hopper(Subsystem):
     self._elevator.reset()
 
   def getFuelLevel(self) -> FuelLevel:
-    distance = self._getHopperSensorDistance()
+    distance = self._getHopperFuelSensorDistance()
     if distance > -1:
       if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.FULL]:
         return FuelLevel.FULL
       if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.MID]:
         return FuelLevel.MID
-      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.LOW] or self._getIndexerSensorHasTarget():
+      if distance <= self._constants.FUEL_LEVEL_SENSOR_DISTANCES[FuelLevel.LOW] or self._getIndexerFuelSensorHasTarget():
         return FuelLevel.LOW
     return FuelLevel.EMPTY
   
