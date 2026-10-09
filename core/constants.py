@@ -342,7 +342,7 @@ class Sensors:
   class Proximity:
     INDEXER_FUEL_SENSOR_CONFIG = BinarySensorConfig( 
       channel = 2,
-      telemetryName = "Robot/Sensors/Indexer/Fuel"
+      telemetryName = "Robot/Sensors/Proximity/Indexer/Fuel"
     )
 
     HOPPER_FUEL_SENSOR_CONFIG = DistanceSensorConfig( 
@@ -350,7 +350,7 @@ class Sensors:
       pulseWidthConversionFactor = 2.0, 
       minTargetDistance = 0, 
       maxTargetDistance = 580,
-      telemetryName = "Robot/Sensors/Hopper/Fuel"
+      telemetryName = "Robot/Sensors/Proximity/Hopper/Fuel"
     )
 
 class Cameras:
